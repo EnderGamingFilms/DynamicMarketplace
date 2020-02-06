@@ -1,0 +1,32 @@
+name: dynaMark
+version: 1.5
+main: org.dynamicmarketplace.dynamicmarketplace.DynamicMarketplace
+api-version: 1.13
+depend: [Vault]
+softdepend: [PlaceholderAPI]
+commands:
+  buy:
+    permission: dynamark.buy
+    description: buy an item from the shop
+    usage: /buy <item> <amount>
+  sell:
+    permission: dynamark.sell
+    description: sell and item to the shop
+    usage: /sell <item> <amount>
+  sellhand:
+    permission: dynamark.sellhand
+    description: sells the item(s) currently in your hand
+    usage: /sellhand
+  sellall:
+    permission: dynamark.sellall
+    description: sells everything in your inventory
+    usage: /sellall
+  iteminfo:
+    description: see market info on a specific item
+    usage: /itemInfo <item>
+  infohand:
+    description: see market information for held item
+    usage: /infoHand
+  dynmarket:
+    description: Main command for dynamic market
+    aliases: [market]
