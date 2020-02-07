@@ -17,5 +17,8 @@ Will return the in-game display name for the item you chose.
     
     %market_amount_mat:<material_name>%
 
-Will return the current amount of an item is left in the market
+Will return the current amount of an item is left in the market.
+    
+    %market_hand%
 
+Grabs and returns the sell price of the currently held item of a player (Useful if displaying item price on a dynamic hologram).
