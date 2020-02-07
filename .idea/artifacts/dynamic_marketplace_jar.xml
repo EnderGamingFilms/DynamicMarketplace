@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="dynamic-marketplace:jar">
-    <output-path>$PROJECT_DIR$/../Exports</output-path>
-    <root id="archive" name="dynamic-marketplace.jar">
-      <element id="module-output" name="dynamicmarketplace" />
-    </root>
-  </artifact>
-</component>
