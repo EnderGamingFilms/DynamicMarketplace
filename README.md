@@ -1,24 +1,39 @@
-### The Folder `Dynamic Market` should be put into the plugins folder of the server. It contains the data about recipes that are loaded by the plugin on startup.
+## Commands
+<code>/market reload - Reloads config</code><br />
+<code>/market cost \<item> \<amount> - Gets the cost of an item</code><br />
+<code>/market collector [playerName] - Opens the collector gui</code><br />
+<code>/buy \<item> \<amount> - Buy an item from the market</code><br />
+<code>/sell \<item> \<amount> - Sells an item to the market</code><br />
+<code>/sellall \<item> - Sells all of an item in your inventory</code><br />
+<code>/iteminfo \<item> - Get info on a specific item</code><br />
+<code>/sellhand - Sells the item in your hand and that amount</code>
 
-## PlaceHolderAPI
-Download and install the latest [PlaceHolderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
+## Permissions
+<code>market.\*</code> - Admin<br />
+<code>market.command.\*</code> - Admin<br />
+<code>market.reload</code> - Admin<br />
+<code>market.command.buy</code> - Admin<br />
+<code> market.command.sell</code> - Admin<br />
+<code> market.command.sellall</code> - Admin<br />
+<code> market.command.sellhand</code> - Admin<br />
+<code>market.command.collector</code> - Admin<br />
+<code> market.command.info</code> - Admin<br />
+<code>market.command.cost</code> - Admin<br />
 
-    %market_sellPrice_mat:<material_name>,amt:<amount>%
+## PlaceHolderAPI Compatible
+Make sure **PAPI** is installed! Download and install the latest [PlaceHolderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
+### <ins>PlaceHolders:</ins>
+> <code>%market_buy_{material},{amount}% >> returns items buy price</code>
 
-Will return the current sell price for x amount of item.
+> <code>%market_sell_{material},{amount}% >> returns items sell price</code>
 
-    %market_buyPrice_mat:<material_name>,amt:<amount>%
+> <code>%market_friendly_{material}% >> returns non-namespaced item name</code>
 
-Will return the current buy price for x amount of item.
+> <code>%market_amount_{material}% >> returns amount of item in the market</code>
 
-    %market_friendly_mat:<material_name>%
+> <code>%market_hand% >> returns the sell price of held item</code>
 
-Will return the in-game display name for the item you chose.
-    
-    %market_amount_mat:<material_name>%
-
-Will return the current amount of an item is left in the market.
-    
-    %market_hand%
-
-Grabs and returns the sell price of the currently held item of a player (Useful if displaying item price on a dynamic hologram).
+## Requirements
+### • Vault [\[link\]](https://www.spigotmc.org/resources/vault.34315/)
+### • Any vault compatible economy plugin
+### • PAPI (optional) [\[link\]](https://www.spigotmc.org/resources/placeholderapi.6245/)

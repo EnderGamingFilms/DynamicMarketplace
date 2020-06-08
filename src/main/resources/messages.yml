@@ -1,0 +1,29 @@
+prefix: "&6[Market] &f"
+no-permission:
+  message: "&cYou do not have permission for this command."
+  prefix: true
+non-player: "&4Only players can run this command."
+item-cost: "&6%amount% %item%(s)&e currently costs &6%cost%"
+invalid-input: "&cInput value is invalid."
+item-errors:
+  invalid: "&eThis item does not seem to be in the Market."
+  named: "&eYou cannot sell an item with a custom name to the Market."
+  enchanted: "&eYou cannot sell enchanted item(s) to the Market."
+  damaged: "&eYou cannot sell damaged item(s) to the Market."
+  holding-air: "&eYou are not holding an item to sell."
+buy:
+  success: "&aYou just purchased &b%amount% %item%(s)&a for %cost%"
+  fail-cost: "&eYou could not afford the purchase, &6cost: %cost%&e, your &6balance: %balance%"
+  fail-amount: "&eYou cannot purchase &b%amount% %item%&e, there are not that many left in the shop."
+  fail-space: "&eInventory space limited!&a Only purchased &b%amount% %item%(s)&a for &b%cost%"
+sell:
+  success: "&aYou have sold &b%amount% %item%(s)&a for &b%cost%"
+  fail-amount: "&eYou didn't have that many &b%item%(s)&e, so &b%amount%&e were sold instead."
+collector:
+  name: "&7&lThe Collector&r "
+  success: "%collector_name%&ehas finished selling your item(s)!"
+  failed: "&eYour transaction has been cancelled."
+  profit: "&aYou received %tax%% of the profits."
+  total: "&6Total Worth: %profit%"
+  adjusted: "&aYou Received: %profit%"
+  invalid-player: "&cThe player you entered is offline or invalid."

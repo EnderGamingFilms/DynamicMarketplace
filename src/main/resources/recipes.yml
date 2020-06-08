@@ -1,0 +1,3 @@
+oak_planks: oak_log 0.25
+craftin_table: 4 oak_planks
+brick: clay_ball 1, coal 0.125, smelting

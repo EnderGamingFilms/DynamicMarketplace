@@ -98,3 +98,11 @@ target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
 target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
 
 target/original-dynamic-marketplace-1.0.jar
+
+.idea/
+
+*.class
+
+target/
+
+DynamicMarket/DynamicMarket Defaults.rar
