@@ -7,42 +7,57 @@ import org.bukkit.Material;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MarketData {
     private static DynamicMarketplace plugin;
-    private HashMap<Material, MarketItem> marketMap;
+    private Map<Material, MarketItem> marketMap = new HashMap<>();
 
     public MarketData(@NotNull final DynamicMarketplace instance) {
         plugin = instance;
-        marketMap = new HashMap<>();
     }
 
     /**
-     * This object is what stores all data about a single item
+     * This object is what stores all data about a single item in the market
      */
     public static class MarketItem {
         private double amount;
-        private double buyPrice;
-        private double sellPrice;
+        private double basePrice;
         private String material;
         private String friendlyName;
+        private String recipe;
 
         public MarketItem(Material material, String friendlyName, double amount) {
             this.amount = amount;
-            this.material = material.toString();
+            this.material = material.getKey().getKey();
             this.friendlyName = friendlyName;
-            // Calculate prices from quantities
-            setBuyPrice();
-            setSellPrice();
-
         }
 
-        public double getBuyPrice(int purchaseAmount) {
-            return round((10 * (purchaseAmount) * this.buyPrice), 2);
+        public MarketItem(Material material, String friendlyName, double amount, String recipe) {
+            this.amount = amount;
+            this.material = material.getKey().getKey();
+            this.friendlyName = friendlyName;
+            this.recipe = recipe;
+        }
+
+        public double getBuyPrice(double purchaseAmount) {
+            return purchaseAmount * this.basePrice * getTax();
+        }
+
+        public double getBuyPrice() {
+            return getBuyPrice(1);
+        }
+
+        public double getBasePrice() {
+            return basePrice;
         }
 
         public double getSellPrice(int purchaseAmount) {
-            return round((10 * (purchaseAmount) * this.sellPrice), 2);
+            return purchaseAmount * this.basePrice * getTax();
+        }
+
+        public double getSellPrice() {
+            return getSellPrice(1);
         }
 
         public double getAmount() {
@@ -57,16 +72,16 @@ public class MarketData {
             return material;
         }
 
+        public String getRecipe() {
+            return recipe;
+        }
+
         public void setAmount(double amount) {
             this.amount = amount;
         }
 
-        public void setBuyPrice() {
-            this.buyPrice = (getScalar() * (1 / this.amount)) * getTax();
-        }
-
-        public void setSellPrice() {
-            this.sellPrice = (getScalar() * (1 / this.amount)) * 1 / getTax();
+        public void setBasePrice(double buyPrice) {
+            this.basePrice = buyPrice;
         }
 
         public void setFriendly(String friendlyName) {
@@ -76,6 +91,18 @@ public class MarketData {
         public void setMaterial(String material) {
             this.material = material;
         }
+
+        public void setRecipe(String recipe) {
+            this.recipe = recipe;
+        }
+
+        public boolean hasRecipe() {
+            return recipe != null;
+        }
+    }
+
+    private static double adjustBuy(String item, double amount) {
+        return plugin.calculations.calcPrice(item, amount);
     }
 
     /**
@@ -95,15 +122,6 @@ public class MarketData {
     /**
      * This is to relay config data to MarketItems
      *
-     * @return double - QuantityScalar found in config.yml
-     */
-    private static int getScalar() {
-        return plugin.fileManager.scalar;
-    }
-
-    /**
-     * This is to relay config data to MarketItems
-     *
      * @return double - Tax found in config.yml
      */
     private static double getTax() {
@@ -118,7 +136,7 @@ public class MarketData {
      * @return MarketItem - Used to access item's market information
      */
     public MarketItem getItem(Material material, boolean silent) {
-        if (itemExists(material))
+        if (itemExists(material, silent))
             return marketMap.get(material);
         return new MarketItem(Material.AIR, "", 0);
     }
@@ -166,6 +184,19 @@ public class MarketData {
         marketMap.put(material, new MarketItem(material, plugin.messageUtils.capitalize(material.getKey().getKey()), amount));
     }
 
+
+    public void putItem(String materialName, int amount, String recipe) {
+        if (resolveItem(materialName)) {
+            plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to put incorrect material into market storage. &3(" + materialName + ")");
+            return;
+        }
+
+        final Material material = Material.matchMaterial(materialName);
+
+
+        marketMap.put(material, new MarketItem(material, plugin.messageUtils.capitalize(material.getKey().getKey()), amount, recipe));
+    }
+
     /**
      * Use this to place a new item into storage
      *
@@ -191,7 +222,16 @@ public class MarketData {
      */
     public boolean itemExists(Material material) {
         if (!marketMap.containsKey(material)) {
-            plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage");
+            plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage &3(" + material.getKey().getKey() + ")");
+            return false;
+        }
+        return true;
+    }
+    public boolean itemExists(Material material, boolean silent) {
+        if (!marketMap.containsKey(material)) {
+            if (!silent) {
+                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage &3(" + material.getKey().getKey() + ")");
+            }
             return false;
         }
         return true;
@@ -212,7 +252,7 @@ public class MarketData {
         final Material material = Material.matchMaterial(materialName);
 
         if (!marketMap.containsKey(material)) {
-            plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage");
+            plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage &3(" + material.getKey().getKey() + ")");
             return false;
         }
         return true;
@@ -237,7 +277,7 @@ public class MarketData {
 
         if (!marketMap.containsKey(material)) {
             if (!silent) {
-                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage");
+                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage &3(" + material.getKey().getKey() + ")");
             }
             return false;
         }
@@ -253,5 +293,14 @@ public class MarketData {
     public boolean resolveItem(String material) {
         final Material resolved = Material.matchMaterial(material);
         return resolved == null;
+    }
+
+    /**
+     * Use this to check if an item is in market storage
+     *
+     * @return MarketData - Will return the entire market map (shouldn't be used often)
+     */
+    public Map<Material, MarketItem> getDataMap() {
+        return this.marketMap;
     }
 }

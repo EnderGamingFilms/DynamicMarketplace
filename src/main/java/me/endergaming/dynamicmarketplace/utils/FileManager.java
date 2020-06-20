@@ -1,6 +1,7 @@
 package me.endergaming.dynamicmarketplace.utils;
 
 
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -8,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.text.DecimalFormat;
+import java.util.*;
 
 import static me.endergaming.dynamicmarketplace.utils.Responses.*;
 
@@ -19,7 +21,9 @@ public class FileManager {
         this.plugin = instance;
     }
 
-    /** |-------------- Settings --------------| */
+    /**
+     * |-------------- Settings --------------|
+     */
     public int scalar;
     public double tax;
     public double multiplierCraft;
@@ -32,25 +36,35 @@ public class FileManager {
     public boolean debug;
     //------------------------------------------
 
-    /** |-------------- Files --------------| */
+    /**
+     * |-------------- Files --------------|
+     */
     private FileConfiguration config;
     private FileConfiguration messages;
     private File configFile;
     private File messageFile;
-    private File materialsFile;
+    public File materialsFile;
     private File recipesFile;
+    private File listFile;
     //------------------------------------------
 
     public void setup() {
         setupConfig();
         // Load settings
         reloadSettings();
+        // Load everything else
         setupMessages();
         setupMaterials();
         setupRecipes();
+        readMaterialData();
+        readRecipeData();
+        // Generate pricing
+        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial()));
     }
 
-    /** |-------------- Config.yml --------------| */
+    /**
+     * |-------------- Config.yml --------------|
+     */
     public void setupConfig() {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
@@ -60,8 +74,8 @@ public class FileManager {
 
         if (!configFile.exists()) {
             try {
-                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eConfig.yml did not exist so one was created");
                 plugin.saveResource("config.yml", true);
+                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eConfig.yml did not exist so one was created");
             } catch (Exception e) {
                 plugin.messageUtils.log(MessageUtils.LogLevel.SEVERE, "&cThere was an issue creating Config.yml");
             }
@@ -95,7 +109,9 @@ public class FileManager {
     }
     //------------------------------------------
 
-    /** |-------------- Message.yml --------------| */
+    /**
+     * |-------------- Message.yml --------------|
+     */
     public void setupMessages() {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
@@ -105,8 +121,8 @@ public class FileManager {
 
         if (!messageFile.exists()) {
             try {
-                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eMessages.yml did not exist so one was created");
                 plugin.saveResource("messages.yml", true);
+                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eMessages.yml did not exist so one was created");
             } catch (Exception e) {
                 plugin.messageUtils.log(MessageUtils.LogLevel.SEVERE, "&cThere was an issue creating Messages.yml");
             }
@@ -128,7 +144,9 @@ public class FileManager {
     }
     //------------------------------------------
 
-    /** |-------------- Materials.yml --------------| */
+    /**
+     * |-------------- Materials.yml --------------|
+     */
     public void setupMaterials() {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
@@ -138,8 +156,8 @@ public class FileManager {
 
         if (!materialsFile.exists()) {
             try {
-                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eMaterials.yml did not exist so one was created");
                 plugin.saveResource("materials.yml", true);
+                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eMaterials.yml did not exist so one was created");
             } catch (Exception e) {
                 plugin.messageUtils.log(MessageUtils.LogLevel.SEVERE, "&cThere was an issue creating Materials.yml");
             }
@@ -162,14 +180,74 @@ public class FileManager {
                 String[] item = line.split("(: )");
                 plugin.marketData.putItem(item[0], Double.parseDouble(item[1]));
             }
+            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void saveMaterialData() {
+        Map<Integer, String> dataMap = new HashMap<>();
+        try {
+            Material material;
+            // Setup BufferedReader
+            BufferedReader br = new BufferedReader(new FileReader(materialsFile));
+
+            // Read line by line
+            String line;
+
+            // Go thought the file grabbing line by line
+            for (int key = 0; (line = br.readLine()) != null; ++key) {
+                String[] item = line.split("(: )");
+                dataMap.put(key, item[0]);
+            }
+            MarketData.MarketItem item;
+
+            // Print data to file
+            FileWriter fileWriter = new FileWriter(materialsFile, false);
+            for (int i = 0; i < dataMap.size(); ++i) {
+                item = plugin.marketData.getItem(dataMap.get(i));
+                fileWriter.write(String.format("%s: %s\n", item.getMaterial(), item.getAmount()));
+            }
+
+            // Close files
+            fileWriter.close();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean outputMissingMats() {
+        listFile = new File(plugin.getDataFolder(), "unresolved.yml");
+        try {
+            listFile.createNewFile();
+            plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eUnresolved.yml has been successfully created");
+        } catch (Exception e) {
+            plugin.messageUtils.log(MessageUtils.LogLevel.SEVERE, "&cThere was an issue creating Unresolved.yml");
+            return false;
+        }
+        try {
+        FileWriter fileWriter = new FileWriter(listFile, false);
+        fileWriter.write("# These items are not inside materials.yml or recipes.yml, please add them if you want to generate prices\n");
+        for (Material m : Material.values()) {
+            if (!plugin.marketData.itemExists(m, true)) {
+                fileWriter.write(String.format("%s\n", m.getKey().getKey()));
+            }
+        }
+        fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
     //------------------------------------------
 
 
-    /** |-------------- Recipes.yml --------------| */
+    /**
+     * |-------------- Recipes.yml --------------|
+     */
     public void setupRecipes() {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
@@ -178,8 +256,8 @@ public class FileManager {
 
         if (!recipesFile.exists()) {
             try {
-                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eRecipes.yml did not exist so one was created");
                 plugin.saveResource("recipes.yml", true);
+                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eRecipes.yml did not exist so one was created");
             } catch (Exception e) {
                 plugin.messageUtils.log(MessageUtils.LogLevel.SEVERE, "&cThere was an issue creating Recipes.yml");
             }
@@ -187,18 +265,54 @@ public class FileManager {
     }
 
     public void readRecipeData() {
-    }
-    //------------------------------------------
+        try {
+            // Setup BufferedReader
+            BufferedReader br = new BufferedReader(new FileReader(recipesFile));
 
-    public void reloadAll() {
-        // Stage 1
+            // Read line by line
+            String line;
+
+            // Go thought the file grabbing line by line
+            List<String> items;
+            while ((line = br.readLine()) != null) {
+                String[] item = line.split("(: )");
+                plugin.marketData.putItem(item[0], -1, item[1]);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * |-------------- General Market Functions --------------|
+     */
+    public void loadAll() {
+        // Stage 1 - Reload messages.yml
         reloadMessages();
-        // Stage 2
+        // Stage 2 - Reload config.yml and load settings into plugin
         reloadConfig();
         reloadSettings();
-        // Stage 3
+        // Stage 3 - Re-read all data from materials.yml & recipes.yml
         readMaterialData();
-        // Stage 4
         readRecipeData();
+        // Stage 5 - Re-calculate buy & sell prices for all items
+        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial()));
     }
+
+    public void reloadItemData() {
+        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial()));
+    }
+
+    public void reloadAllContainingItem(String item) {
+        plugin.marketData.getDataMap().forEach((k, v) -> {
+            if (v.getRecipe() != null && v.getRecipe().contains(item)) {
+                // Re-Calculate Prices
+                plugin.calculations.calcPrice(v.getMaterial());
+                // Recursively update items that require other items that were previously updated
+                reloadAllContainingItem(v.getMaterial());
+            }
+        });
+    }
+    //------------------------------------------
 }

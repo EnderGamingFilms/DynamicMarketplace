@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class MessageUtils {
     private final DynamicMarketplace plugin;
-    public String prefix = "&6[DynamicMarketplace] ";
+    public String prefix = "&6[Market] &f";
     public final static String NL = "\n";
     public final static String SPACE = " ";
 

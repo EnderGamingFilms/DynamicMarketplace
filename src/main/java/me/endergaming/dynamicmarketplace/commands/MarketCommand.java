@@ -34,6 +34,7 @@ public class MarketCommand extends BaseCommand {
         // Player run commands
         Player player = (Player) sender;
 
+        // Return help menu if no args are passed
         if (args.length == 0) {
             PlayerInteractions.getHelp(player);
             return true;
@@ -45,20 +46,53 @@ public class MarketCommand extends BaseCommand {
             ReloadCommand.run(player);
         } else if (args[0].equalsIgnoreCase("collector")) {
             CollectorCommand.runFromPlayer(player, args);
+        } else if (args[0].equalsIgnoreCase("missing")) {
+            if (player.hasPermission("market.*")) {
+                player.sendMessage(instance.respond.genMissingFile(instance.fileManager.outputMissingMats()));
+            } else {
+                player.sendMessage(instance.respond.noPerms());
+            }
         } else if (args[0].equalsIgnoreCase("buy")) {
             BuyCommand.run(player, args, args[0]);
         } else if (args[0].equalsIgnoreCase("test")) { // |------------- CURRENT TEST COMMAND -------------|
             // Stuff Here
-            instance.fileManager.reloadMessages();
-            instance.fileManager.reloadConfig();
-            instance.respond.test(player);
-
-            // New Market Data Storage Test
-            if(args.length > 1) {
-                player.sendMessage(instance.messageUtils.colorize("&7GET (Mat): &6" + instance.marketData.getItem(args[1]).getMaterial()));
-                player.sendMessage(instance.messageUtils.colorize("&7GET (Mat): &6" + instance.marketData.getItem(args[1]).getAmount()));
+            if (args.length > 2) {
+                instance.marketData.getItem(args[1]).setAmount(Double.parseDouble(args[2]));
+                player.sendMessage(instance.messageUtils.colorize("&7Set amount of &3" + instance.marketData.getItem(args[1]).getFriendly() + "&7 to&3 " + args[2]));
+            } else {
+                if (args.length > 1) {
+                    if (args[1].equalsIgnoreCase("reload")) {
+                        instance.fileManager.reloadItemData();
+                        instance.marketData.getDataMap().forEach((k, v) -> System.out.println("TEST | All Prices (" +
+                                v.getMaterial() + "): " + v.getBuyPrice()));
+                    } else if (args[1].equalsIgnoreCase("amount")) {
+                        player.sendMessage(instance.messageUtils.colorize("&eAmount in Market: &6" +
+                                instance.marketData.getItem(player.getItemInHand().getType().toString()).getAmount()));
+                    } else if (args[1].equalsIgnoreCase("load")) {
+                        instance.fileManager.readMaterialData();
+                    } else if (args[1].equalsIgnoreCase("buy")) {
+                        player.sendMessage(instance.messageUtils.colorize("&eMarket Buy Price: &a" +
+                                instance.marketData.getItem(player.getItemInHand().getType().toString())
+                                        .getBuyPrice(player.getItemInHand().getAmount())));
+                    } else if (args[1].equalsIgnoreCase("sell")) {
+                        player.sendMessage(instance.messageUtils.colorize("&eMarket Sell Price: &c" +
+                                instance.marketData.getItem(player.getItemInHand().getType().toString())
+                                        .getSellPrice(player.getItemInHand().getAmount())));
+                    } else if (args[1].equalsIgnoreCase("missing")) {
+                        instance.fileManager.outputMissingMats();
+                    } else if (args[1].equalsIgnoreCase("update")) {
+                        instance.fileManager.reloadAllContainingItem(player.getItemInHand().getType().toString().toLowerCase());
+                        player.sendMessage(instance.messageUtils.colorize("&eUpdated Price: &a") +
+                                instance.marketData.getItem(player.getItemInHand().getType().toString())
+                                        .getSellPrice());
+                        instance.fileManager.saveMaterialData();
+                        player.sendMessage(instance.messageUtils.colorize("&7(&c!&7) &dMarket data saved."));
+                    }
+                } else {
+                    player.sendMessage(instance.messageUtils.colorize("&cNothing happened..."));
+                    return false;
+                }
             }
-
         } else if (args[0].equalsIgnoreCase("sell")) {
             SellCommand.run(player, args, args[0]);
         } else if (args[0].equalsIgnoreCase("cost")) {

@@ -59,6 +59,14 @@ public class Responses {
     public String itemCost(String item, final int amount, final String price) {
         return plugin.messageUtils.getFormattedMessage("item-cost", item, amount, price);
     }
+
+    public String genMissingFile(boolean passed) {
+        if (passed) {
+            return plugin.messageUtils.format("&eMissing materials file &7(unresolved.yml)&e was successfully created!");
+        }
+        return plugin.messageUtils.format("&cThere was an error creating missing materials file &7(unresolved.yml)");
+    }
+
     //------------------------------------------
 
     /** |-------------- Buy Responses --------------| */

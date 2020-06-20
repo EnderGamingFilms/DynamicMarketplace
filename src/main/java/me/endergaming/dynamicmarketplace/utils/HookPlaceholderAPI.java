@@ -83,8 +83,8 @@ public class HookPlaceholderAPI extends PlaceholderExpansion {
         } else if (params.equalsIgnoreCase("hand")) {
             if (plugin.marketData.itemExists(player.getItemInHand().getType().getKey().getKey(), true)) {
                 item = plugin.marketData.getItem(player.getItemInHand().getType(), true);
-                double price = (item.getSellPrice(player.getItemInHand().getAmount()));
-                return plugin.economy.format(price);
+//                double price = (item.getSellPrice(player.getItemInHand().getAmount())); // Change back to sell
+                return plugin.economy.format(item.getBuyPrice());
             }
             return "$0.00";
         }

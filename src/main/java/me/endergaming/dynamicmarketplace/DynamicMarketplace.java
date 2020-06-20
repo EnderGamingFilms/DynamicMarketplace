@@ -19,6 +19,7 @@ public final class DynamicMarketplace extends JavaPlugin {
     public final MessageUtils messageUtils = new MessageUtils(this);
     public final Responses respond = new Responses(this);
     public final MarketData marketData = new MarketData(this);
+    public final Calculations calculations = new Calculations(this);
     //    public final GuiManager guiManager = new GuiManager(this);
     public final CollectorGUI collectorGUI = new CollectorGUI(this);
     public Economy economy;
@@ -61,6 +62,12 @@ public final class DynamicMarketplace extends JavaPlugin {
         new InventoryListener(this);
         collectorGUI.initialize();
     }
+
+//    @Override
+//    public void onDisable() {
+//        fileManager.saveMaterialData();
+//        super.onDisable();
+//    }
 
     public void registerCommand(BaseCommand command) {
         command.register();

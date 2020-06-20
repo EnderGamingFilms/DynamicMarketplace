@@ -6,17 +6,20 @@ import me.endergaming.dynamicmarketplace.SaveData;
 import org.bukkit.entity.Player;
 
 public class ReloadCommand {
-    private static DynamicMarketplace instance = DynamicMarketplace.getInstance();
+    private static DynamicMarketplace plugin = DynamicMarketplace.getInstance();
 
     public static void run(Player player) {
-        long start = System.currentTimeMillis();
         if (!player.hasPermission("market.reload")) {
             PlayerInteractions.noPermission((player));
             return;
         }
-        SaveData.reloadALL();
-        instance.fileManager.reloadAll();
+
+        // Reload Actions
+        long start = System.currentTimeMillis();
+        plugin.fileManager.saveMaterialData();
+//        SaveData.reloadALL();
+        plugin.fileManager.loadAll();
         long end = System.currentTimeMillis();
-        player.sendMessage(instance.respond.pluginReload(end-start));
+        player.sendMessage(plugin.respond.pluginReload(end-start));
     }
 }

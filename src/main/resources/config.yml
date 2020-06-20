@@ -1,10 +1,10 @@
 # ----------------------------------------------------------------
-  # MySQL Storage - This is very helpful when storing player data that is constantly being acced.
-  #   Currently MySQL storage will only be used to store player standing for "The Collector"
-  # Disabled By Default
-  # ----------------------------------------------------------------
+# MySQL Storage - This is very helpful when storing player data that is constantly being acced.
+#   Currently MySQL storage will only be used to store player standing for "The Collector"
+# Disabled By Default
+# ----------------------------------------------------------------
 
-  MySQL:
+MySQL:
     Enable: false
     Host: "localhost"
     Port: 3306
@@ -12,24 +12,24 @@
     Username: "root"
     Password: "password"
 
-  # ----------------------------------------------------------------
-  # Price Scaling - Tax, Scalar, and Multiplier settings.
-  #
-  # [QuantityScalar] will be the aproximate price of an item if there is only one left in the shop
-  #       Prices are proportional to 1/quantity, so with 10x more of an item, it costs 1/10th as much
-  # [Multipliers] are applied only when BUYING items and make specific items cost more to buy
-  #       IE: any item that requires crafting will have its final price multiplied by the crafting Multiplier
-  #       for every craft that went into it.
-  #       Adding in custom modifiers is possible if you want, but do not remove default ones.
-  # ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# Price Scaling - Tax, Scalar, and Multiplier settings.
+#
+# [QuantityScalar] will be the aproximate price of an item if there is only one left in the shop
+#       Prices are proportional to 1/quantity, so with 10x more of an item, it costs 1/10th as much
+# [Multipliers] are applied only when BUYING items and make specific items cost more to buy
+#       IE: any item that requires crafting will have its final price multiplied by the crafting Multiplier
+#       for every craft that went into it.
+#       Adding in custom modifiers is possible if you want, but do not remove default ones.
+# ----------------------------------------------------------------
 
-  # Default: 4000
-  QuantityScalar: 4000
+# Default: 4000
+QuantityScalar: 4000
 
-  # Default: 1.02
-  Tax: 1.02
+# Default: 1.02
+Tax: 1.02
 
-  Multipliers:
+Multipliers:
     # Default: 1.15
     Crafting: 1.15
     # Default: 1.12
@@ -37,27 +37,27 @@
     # Default: 1.10
     Growing: 1.10
 
-  # ----------------------------------------------------------------
-  # The Collector - This can be anything you want it to be. This is used to allow players to sell their items
-  #   back to the server with some kind of tax induced. There is also a "standing" system to reward players
-  #   with less heavily taxed selling profits.
-  # Usage: /collector <player> - To open GUI
-  # ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# The Collector - This can be anything you want it to be. This is used to allow players to sell their items
+#   back to the server with some kind of tax induced. There is also a "standing" system to reward players
+#   with less heavily taxed selling profits.
+# Usage: /collector <player> - To open GUI
+# ----------------------------------------------------------------
 
-  TheCollector:
+TheCollector:
     # Default: true
     Enabled: true
-    # Default: 60 - This is the base/lowest amount a player can be taxed for selling items
+    # Default: 60 - This is the base/lowest amount a player can be taxed for selling items (% players receive)
     Tax: 60.0
     Standing:
-      # Default: false - If you plan on turning this on I recommend you make sure MySQL is also enabled
-      Enabled: false
+        # Default: false - If you plan on turning this on I recommend you make sure MySQL is also enabled
+        Enabled: false
 
-  # ----------------------------------------------------------------
-  # Blacklist certain items from the /buy <item> <amount> command. Use this if you plan on giving
-  # players access to the buy command (Ops cannot bypass this).
-  # ----------------------------------------------------------------
-  Purchase-Blacklist: []
+# ----------------------------------------------------------------
+# Blacklist certain items from the /buy <item> <amount> command. Use this if you plan on giving
+# players access to the buy command (Ops cannot bypass this).
+# ----------------------------------------------------------------
+Purchase-Blacklist: []
 
-  # Debugging Settings
-  Debug: false
+# Debugging Settings
+Debug: false
