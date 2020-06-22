@@ -1,59 +1,50 @@
 package me.endergaming.dynamicmarketplace.commands;
 
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
-import me.endergaming.dynamicmarketplace.utils.PlayerInteractions;
-import me.endergaming.dynamicmarketplace.SaveData;
-import me.endergaming.dynamicmarketplace.ShopOpperations;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public class SellAllCommand extends BaseCommand{
-    private static DynamicMarketplace instance = DynamicMarketplace.getInstance();
-    public SellAllCommand(String command) {
+public class SellAllCommand extends BaseCommand {
+    private final DynamicMarketplace plugin;
+
+    public SellAllCommand(String command, @NotNull final DynamicMarketplace instance) {
         super(command);
+        this.plugin = instance;
     }
 
-    public static void run(Player player, String[] args, String cmd) {
-        if (!player.hasPermission("market.sellall")) {
-            PlayerInteractions.noPermission((player));
+    public void run(Player player) {
+        if (!player.hasPermission("market.command.sellall")) {
+            plugin.messageUtils.send(player, plugin.respond.noPerms());
             return;
         }
 
-        if (args.length == 1) {
-            PlayerInteractions.getHelp(player, cmd);
-            return;
-        }
-
-        // Remove "sell" from args
-        String[] str = args;
-        str = String.join(" ", str).replace("sellall ", "").split(" ");
-
-        // Command actions
-        if (SaveData.validItem(str[0], player)) {
-            instance.operationsManager.sellItems(player, str[0], 1, true);
-            SaveData.saveMarket();
+        // Command Actions
+        if (plugin.marketData.contains(player.getItemInHand().getType(), true)) {
+            plugin.operations.makeSale(player, player.getInventory(), plugin.operations.COMMAND);
         } else {
-            PlayerInteractions.itemInvalid(player, str[0]);
+            plugin.messageUtils.send(player, plugin.respond.itemInvalid());
         }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            PlayerInteractions.nonPlayer(sender);
+            plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
             return false;
         }
 
-        if (!sender.hasPermission("market.sellall")) {
-            PlayerInteractions.noPermission((Player) sender);
+        if (!sender.hasPermission("market.command.sellall")) {
+            plugin.messageUtils.send(sender, plugin.respond.noPerms());
             return false;
         }
 
         if (args.length == 0) {
-            sender.sendMessage(cmd.getUsage()); return false;
+            sender.sendMessage(cmd.getUsage());
+            return false;
         }
-        run((Player) sender, args, cmd.getName());
+        run((Player) sender);
 
         return true;
     }

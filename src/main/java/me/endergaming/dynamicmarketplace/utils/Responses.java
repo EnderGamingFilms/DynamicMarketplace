@@ -56,8 +56,8 @@ public class Responses {
         return plugin.messageUtils.getFormattedMessage("invalid-input");
     }
 
-    public String itemCost(String item, final int amount, final String price) {
-        return plugin.messageUtils.getFormattedMessage("item-cost", item, amount, price);
+    public String itemWorth(String item, final int amount, final String price) {
+        return plugin.messageUtils.getFormattedMessage("item-worth", item, amount, price);
     }
 
     public String genMissingFile(boolean passed) {
@@ -127,30 +127,6 @@ public class Responses {
 
     public String collectorTax(final int tax) {
         return plugin.messageUtils.getFormattedMessage("collector.profit", tax, false);
-    }
-
-    public void test(Player player) {
-        Player p = player;
-        if (plugin.messageUtils.grabConfig("Debug", BOOLEAN)) {
-            p.sendMessage(collectorInvalidPlayer());
-            p.spigot().sendMessage(collectorSuccess(77, "$300.0", "$290.0"));
-            p.sendMessage(collectorFailed());
-            p.sendMessage(sellSuccess("Diamond", 13, "$512.23"));
-            p.sendMessage(sellFailedAmount("Melon", 17));
-            p.sendMessage(buySuccess("Stick", 7, "$14.13"));
-            p.sendMessage(buyFailedAmount("White Wool", 4));
-            p.sendMessage(buyFailedCost("$42.13", "$4.12"));
-            p.sendMessage(buyFailedSpace("Iron Ingot", 64));
-            p.sendMessage(itemCost("Apple", 4, "$12.10"));
-            p.sendMessage(holdingNothing());
-            p.sendMessage(itemInvalid());
-            p.sendMessage(itemIsDamaged());
-            p.sendMessage(itemIsEnchanted());
-            p.sendMessage(itemIsNamed());
-            p.sendMessage(nonPlayer());
-            p.sendMessage(noPerms());
-            p.sendMessage(pluginReload(217));
-        }
     }
     //------------------------------------------
 }

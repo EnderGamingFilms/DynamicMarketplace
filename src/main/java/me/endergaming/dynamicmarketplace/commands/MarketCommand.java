@@ -1,17 +1,18 @@
 package me.endergaming.dynamicmarketplace.commands;
 
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
-import me.endergaming.dynamicmarketplace.utils.PlayerInteractions;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class MarketCommand extends BaseCommand {
-    private static DynamicMarketplace instance = DynamicMarketplace.getInstance();
-    public MarketCommand(String command) {
+    private final DynamicMarketplace plugin;
+    public MarketCommand(String command, @NotNull final DynamicMarketplace instance) {
         super(command);
+        this.plugin = instance;
     }
 
     @Override
@@ -22,12 +23,12 @@ public class MarketCommand extends BaseCommand {
                 if (args[0].equalsIgnoreCase("collector")) {
                     // Collector Command
                     if (args.length == 2) {
-                        CollectorCommand.runFromConsole(sender, args); // For console-only
+                        plugin.cmdManager.collectorCmd.runFromConsole(sender, args); // For console-only
                     } else {
                         sender.sendMessage(ChatColor.YELLOW + "/market collector [playerName] " + ChatColor.WHITE + "- Opens the collector gui");
                     }
                 } else {
-                    PlayerInteractions.nonPlayer(sender);
+                    plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
                 }
             }
             return true;
@@ -37,87 +38,76 @@ public class MarketCommand extends BaseCommand {
 
         // Return help menu if no args are passed
         if (args.length == 0) {
-            PlayerInteractions.getHelp(player);
+//            PlayerInteractions.getHelp(player);
             return true;
         }
 
         if (args[0].toLowerCase().matches("help|hlp|h|plz")) {
-            PlayerInteractions.getHelp(player);
+//            PlayerInteractions.getHelp(player);
         } else if (args[0].toLowerCase().matches("reload|rl")) {
-            ReloadCommand.run(player);
+            plugin.cmdManager.reloadCmd.run(player);
+
+        } else if (args[0].toLowerCase().matches("load")) {
+            plugin.cmdManager.reloadCmd.load(player);
         } else if (args[0].equalsIgnoreCase("collector")) {
-            CollectorCommand.runFromPlayer(player, args);
+            plugin.cmdManager.collectorCmd.runFromPlayer(player, args);
         } else if (args[0].equalsIgnoreCase("missing")) {
             if (player.hasPermission("market.*")) {
-                player.sendMessage(instance.respond.genMissingFile(instance.fileManager.outputMissingMats()));
+                player.sendMessage(plugin.respond.genMissingFile(plugin.fileManager.outputMissingMats()));
             } else {
-                player.sendMessage(instance.respond.noPerms());
+                player.sendMessage(plugin.respond.noPerms());
             }
         } else if (args[0].equalsIgnoreCase("buy")) {
-            BuyCommand.run(player, args, args[0]);
+            plugin.cmdManager.buyCmd.run(player, args, args[0]);
         } else if (args[0].equalsIgnoreCase("test")) { // |------------- CURRENT TEST COMMAND -------------|
             // Stuff Here
             if (args.length > 2) {
-                instance.marketData.getItem(args[1]).setAmount(Double.parseDouble(args[2]));
-                player.sendMessage(instance.messageUtils.colorize("&7Set amount of &3" + instance.marketData.getItem(args[1]).getFriendly() + "&7 to&3 " + args[2]));
+                plugin.marketData.getItem(args[1]).setAmount(Double.parseDouble(args[2]));
+                player.sendMessage(plugin.messageUtils.colorize("&7Set amount of &3" + plugin.marketData.getItem(args[1]).getFriendly() + "&7 to&3 " + args[2]));
             } else {
                 if (args.length > 1) {
                     if (args[1].equalsIgnoreCase("reload")) {
-                        instance.fileManager.calcItemData();
-                        instance.marketData.getDataMap().forEach((k, v) -> System.out.println("TEST | All Prices (" +
+                        plugin.fileManager.calcItemData();
+                        plugin.marketData.getDataMap().forEach((k, v) -> System.out.println("TEST | All Prices (" +
                                 v.getMaterial() + "): " + v.getBuyPrice()));
                     } else if (args[1].equalsIgnoreCase("amount")) {
-                        player.sendMessage(instance.messageUtils.colorize("&eAmount in Market: &6" +
-                                instance.marketData.getItem(player.getItemInHand().getType().toString()).getAmount()));
+                        player.sendMessage(plugin.messageUtils.colorize("&eAmount in Market: &6" +
+                                plugin.marketData.getItem(player.getItemInHand().getType().toString()).getAmount()));
                     } else if (args[1].equalsIgnoreCase("load")) {
-                        instance.fileManager.readMaterialData();
+                        plugin.fileManager.readMaterialData();
                     } else if (args[1].equalsIgnoreCase("missing")) {
-                        instance.fileManager.outputMissingMats();
+                        plugin.fileManager.outputMissingMats();
                     } else if (args[1].equalsIgnoreCase("sellall")) {
-                        instance.operations.makeSale(player, player.getInventory(), instance.operations.COLLECTOR);
+                        plugin.operations.makeSale(player, player.getInventory(), plugin.operations.COLLECTOR);
                     }  else if (args[1].equalsIgnoreCase("remove")) {
-                        instance.operations.removeFromInventory(player.getInventory(), player.getInventory().getContents(), Material.APPLE, 16);
+                        plugin.operations.removeFromInventory(player.getInventory(), player.getInventory().getContents(), Material.APPLE, 16);
                     } else if (args[1].equalsIgnoreCase("update")) {
-                        instance.fileManager.calcItemData();
-                        player.sendMessage(instance.messageUtils.colorize("&eUpdated Price: &a") +
-                                instance.marketData.getItem(player.getItemInHand().getType().toString())
+                        plugin.fileManager.calcItemData();
+                        player.sendMessage(plugin.messageUtils.colorize("&eUpdated Price: &a") +
+                                plugin.marketData.getItem(player.getItemInHand().getType().toString())
                                         .getSellPrice());
-                        instance.fileManager.saveMaterialData();
-                        player.sendMessage(instance.messageUtils.colorize("&7(&c!&7) &dMarket data saved."));
+                        plugin.fileManager.saveMaterialData();
+                        player.sendMessage(plugin.messageUtils.colorize("&7(&c!&7) &dMarket data saved."));
                     }
                 } else {
-                    player.sendMessage(instance.messageUtils.colorize("&cNothing happened..."));
+                    player.sendMessage(plugin.messageUtils.colorize("&cNothing happened..."));
                     return false;
                 }
             }
         } else if (args[0].equalsIgnoreCase("sell")) {
-            SellCommand.run(player, args, args[0]);
+            plugin.cmdManager.sellCmd.run(player, args, args[0]);
         } else if (args[0].equalsIgnoreCase("cost")) {
-            CostCommand.run(player, args);
+            plugin.cmdManager.worthCmd.run(player, args);
         } else if (args[0].equalsIgnoreCase("sellhand")) {
-            SellHandCommand.run(player);
+            plugin.cmdManager.sellHandCmd.run(player);
         } else if (args[0].toLowerCase().matches("sellall")) {
-            SellAllCommand.run(player, args, args[0]);
+            plugin.cmdManager.sellAllCmd.run(player);
         } else if (args[0].toLowerCase().matches("iteminfo|info|item")) {
-            ItemInfoCommand.run(player, args, args[0]);
-        } else if (args[0].toLowerCase().matches("settax|tax")) {
-            if (args.length < 2) {
-                player.sendMessage(ChatColor.YELLOW + "/market settax <amount> " + ChatColor.WHITE + "- Set collector player profit");
-                return false;
-            }
-            if (player.hasPermission("market.command.settax")) {
-                if (args[1].matches("^[1-9][0-9]?$|^100$")) {
-                    instance.operationsManager.setTax(Double.parseDouble(args[1]));
-                    player.sendMessage(DynamicMarketplace.getInstance().messageUtils.format("&cThis action is only temporary. Will reset after restart!"));
-                } else {
-                    player.sendMessage(ChatColor.GREEN + "[Market] " + ChatColor.WHITE + "Please enter a percentage from 1-100");
-                }
-            }
+            plugin.cmdManager.itemInfoCmd.run(player, args, args[0]);
         } else {
-            PlayerInteractions.getHelp(player);
+//            PlayerInteractions.getHelp(player);
             return false;
         }
-
         return true;
     }
 

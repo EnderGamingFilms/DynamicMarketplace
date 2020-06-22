@@ -6,34 +6,28 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class BuyCommand extends BaseCommand {
+public class WorthCommand extends BaseCommand {
     private final DynamicMarketplace plugin;
 
-    public BuyCommand(String command, @NotNull final DynamicMarketplace instance) {
+    public WorthCommand(String command, @NotNull final DynamicMarketplace instance) {
         super(command);
         this.plugin = instance;
     }
 
-    public void run(Player player, String[] args, String cmd) {
-        if (!player.hasPermission("market.command.buy")) {
+    public void run(Player player, String[] args) {
+        if (!player.hasPermission("market.command.worth")) {
             plugin.messageUtils.send(player, plugin.respond.noPerms());
             return;
         }
 
-        if (args.length == 1) {
-//            PlayerInteractions.getHelp(player, cmd);
+        if (args.length > 0) {
+//            PlayerInteractions.getHelp(player, args[0]);
             return;
         }
 
-        // Remove "buy" from args
-        String[] str = args;
-        str = String.join(" ", str).replace("buy ", "").split(" ");
-
-        // Command actions
-        if (plugin.marketData.contains(str[0], true)) {
-            int amount = (str.length == 1) ? 1 : plugin.messageUtils.checkAmount(str[1], player);
-            if (amount > 64) amount = 64; // Limit purchases to 1 stack
-            plugin.operations.makePurchase(player, str[0], amount);
+        // Command Actions
+        if (plugin.marketData.contains(player.getItemInHand().getType(), true)) {
+            plugin.operations.getWorth(player, player.getItemInHand());
         } else {
             plugin.messageUtils.send(player, plugin.respond.itemInvalid());
         }
@@ -43,20 +37,20 @@ public class BuyCommand extends BaseCommand {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
             plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
-            return true;
+            return false;
         }
 
-        if (!sender.hasPermission("market.command.buy")) {
+        if (!sender.hasPermission("market.command.worth")) {
             plugin.messageUtils.send(sender, plugin.respond.noPerms());
             return false;
         }
 
-        if (args.length == 0) {
+        if (args.length > 0) {
 //            PlayerInteractions.getHelp((Player) sender, cmd.getName());
             return false;
         }
 
-        run((Player) sender, args, cmd.getName());
+        run((Player) sender, args);
 
         return true;
     }

@@ -4,34 +4,39 @@ import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class CollectorCommand {
-    private static DynamicMarketplace instance = DynamicMarketplace.getInstance();
+    private final DynamicMarketplace plugin;
 
-    public static void runFromConsole(CommandSender sender, String[] args) { // When the command is run from console
+    public CollectorCommand(@NotNull final DynamicMarketplace instance) {
+        this.plugin = instance;
+    }
+
+    public void runFromConsole(CommandSender sender, String[] args) { // When the command is run from console
         Player playerNew = Bukkit.getPlayerExact(args[1]);
         if (playerNew != null && playerNew.isValid()) {
-            playerNew.openInventory(instance.collectorGUI.GUI(playerNew));
+            playerNew.openInventory(plugin.collectorGUI.GUI(playerNew));
         } else {
-            DynamicMarketplace.getInstance().interactionManager.collectorInvalidPlayer(sender);
+            plugin.messageUtils.send(sender, plugin.respond.collectorInvalidPlayer());
         }
     }
 
-    public static void runFromPlayer(Player player, String[] args) {
-        if (!player.hasPermission("market.collector")) {
-            player.sendMessage(instance.respond.noPerms());
+    public void runFromPlayer(Player player, String[] args) {
+        if (!player.hasPermission("market.command.collector")) {
+            player.sendMessage(plugin.respond.noPerms());
             return;
         }
 
         if (args.length >= 2) { // If sender runs /market collector <somePlayer>
             Player playerNew = Bukkit.getPlayerExact(args[1]);
             if (playerNew != null && playerNew.isValid()) {
-                playerNew.openInventory(instance.collectorGUI.GUI(playerNew));
+                playerNew.openInventory(plugin.collectorGUI.GUI(playerNew));
             } else {
-                instance.respond.collectorInvalidPlayer();
+                plugin.messageUtils.send(player, plugin.respond.collectorInvalidPlayer());
             }
         } else { // If sender runs /market collector
-            player.openInventory(instance.collectorGUI.GUI(player));
+            player.openInventory(plugin.collectorGUI.GUI(player));
         }
     }
 }

@@ -3,7 +3,7 @@ no-permission:
   message: "&cYou do not have permission for this command."
   prefix: true
 non-player: "&4Only players can run this command."
-item-cost: "&6%amount% %item%(s)&e currently costs &6%cost%"
+item-worth: "&a%amount% %item%(s)&e currently costs &a%cost%"
 invalid-input: "&cInput value is invalid."
 item-errors:
   invalid: "&eThis item does not seem to be in the Market."

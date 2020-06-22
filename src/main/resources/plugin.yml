@@ -20,7 +20,7 @@ permissions:
     default: op
   market.command.info:
     default: op
-  market.command.cost:
+  market.command.worth:
     default: op
   market.command.*:
     default: op
@@ -31,7 +31,7 @@ permissions:
       market.command.sellhand: true
       market.command.collector: true
       market.command.info: true
-      market.command.cost: true
+      market.command.worth: true
   market.*:
     default: op
     children:

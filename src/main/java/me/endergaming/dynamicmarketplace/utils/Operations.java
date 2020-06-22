@@ -269,4 +269,10 @@ public class Operations {
         else return true;
     }
 
+    public void getWorth(Player player, ItemStack item) {
+        double price = plugin.marketData.getItem(item).getBuyPrice();
+        final String itemName = plugin.marketData.getItem(item).getFriendly();
+        final String message = plugin.respond.itemWorth(itemName, item.getAmount(), getFormatPrice(price));
+        plugin.messageUtils.send(player, message);
+    }
 }

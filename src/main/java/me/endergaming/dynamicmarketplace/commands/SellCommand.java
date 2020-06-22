@@ -1,25 +1,27 @@
 package me.endergaming.dynamicmarketplace.commands;
 
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
-import me.endergaming.dynamicmarketplace.utils.PlayerInteractions;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public class SellCommand extends BaseCommand{
-    private static DynamicMarketplace instance = DynamicMarketplace.getInstance();
-    public SellCommand(String command) {
+public class SellCommand extends BaseCommand {
+    private final DynamicMarketplace plugin;
+
+    public SellCommand(String command, @NotNull final DynamicMarketplace instance) {
         super(command);
+        this.plugin = instance;
     }
 
-    public static void run(Player player, String[] args, String cmd) {
-        if (!player.hasPermission("market.sell")) {
-            PlayerInteractions.noPermission((player));
+    public void run(Player player, String[] args, String cmd) {
+        if (!player.hasPermission("market.command.sell")) {
+            plugin.messageUtils.send(player, plugin.respond.noPerms());
             return;
         }
 
         if (args.length == 1) {
-            PlayerInteractions.getHelp(player, cmd);
+//            PlayerInteractions.getHelp(player, cmd);
             return;
         }
 
@@ -28,29 +30,29 @@ public class SellCommand extends BaseCommand{
         str = String.join(" ", str).replace("sell ", "").split(" ");
 
         // Command actions
-        if (instance.marketData.contains(str[0], false)) {
-            int amount = (str.length == 1) ? 1 : instance.messageUtils.checkAmount(str[1], player);
+        if (plugin.marketData.contains(str[0], false)) {
+            int amount = (str.length == 1) ? 1 : plugin.messageUtils.checkAmount(str[1], player);
             if (amount > 128) amount = 128; // Limit purchases to 2 stack
-            instance.operations.makeSale(player, str[0], amount);
+            plugin.operations.makeSale(player, str[0], amount);
         } else {
-            instance.messageUtils.send(player, instance.respond.itemInvalid());
+            plugin.messageUtils.send(player, plugin.respond.itemInvalid());
         }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            PlayerInteractions.nonPlayer(sender);
+            plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
             return false;
         }
 
-        if (!sender.hasPermission("market.sell")) {
-            PlayerInteractions.noPermission((Player) sender);
+        if (!sender.hasPermission("market.command.sell")) {
+            plugin.messageUtils.send(sender, plugin.respond.noPerms());
             return false;
         }
 
         if (args.length == 0) {
-            PlayerInteractions.getHelp((Player) sender, cmd.getName());
+//            PlayerInteractions.getHelp((Player) sender, cmd.getName());
             return false;
         }
 

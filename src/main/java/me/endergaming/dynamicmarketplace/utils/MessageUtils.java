@@ -1,6 +1,8 @@
 package me.endergaming.dynamicmarketplace.utils;
 
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Bukkit;
@@ -156,6 +158,10 @@ public class MessageUtils {
 
     public void send(Player player, String message) {
         player.sendMessage(message);
+    }
+
+    public void send(CommandSender sender, String message) {
+        sender.sendMessage(message);
     }
 
     public void send(Player player, BaseComponent message) {
