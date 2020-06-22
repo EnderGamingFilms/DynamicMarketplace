@@ -12,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DynamicMarketplace extends JavaPlugin {
     private static DynamicMarketplace instance;
-//    private final HookPlaceholderAPI HookPAPI = new HookPlaceholderAPI(this);
     public final PlayerInteractions interactionManager = new PlayerInteractions(); // REMOVE
     public final ShopOpperations operationsManager = new ShopOpperations();
     public FileManager fileManager = new FileManager(this);
@@ -20,6 +19,7 @@ public final class DynamicMarketplace extends JavaPlugin {
     public final Responses respond = new Responses(this);
     public final MarketData marketData = new MarketData(this);
     public final Calculations calculations = new Calculations(this);
+    public final Operations operations = new Operations(this);
     //    public final GuiManager guiManager = new GuiManager(this);
     public final CollectorGUI collectorGUI = new CollectorGUI(this);
     public Economy economy;
@@ -36,7 +36,7 @@ public final class DynamicMarketplace extends JavaPlugin {
         messageUtils.log(MessageUtils.LogLevel.INFO, "&9Loading vault economy.");
         setupEconomy();
 
-        // Load config files
+        // Load config files - Depreciated
         SaveData.init();
 
         // Register commands
@@ -55,7 +55,7 @@ public final class DynamicMarketplace extends JavaPlugin {
 //            new PlaceholderHook().register();
             new HookPlaceholderAPI(this).register();
         } else {
-            messageUtils.log(MessageUtils.LogLevel.INFO, "&9Unable to load hooks.");
+            messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load hooks.");
         }
 
         // Register Listeners
@@ -63,11 +63,12 @@ public final class DynamicMarketplace extends JavaPlugin {
         collectorGUI.initialize();
     }
 
-//    @Override
-//    public void onDisable() {
-//        fileManager.saveMaterialData();
-//        super.onDisable();
-//    }
+    @Override
+    public void onDisable() {
+        fileManager.saveMaterialData();
+        messageUtils.log(MessageUtils.LogLevel.INFO, "&aSaved all material amount to file.");
+        super.onDisable();
+    }
 
     public void registerCommand(BaseCommand command) {
         command.register();

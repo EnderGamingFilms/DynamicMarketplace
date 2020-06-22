@@ -78,8 +78,8 @@ public class Responses {
             return plugin.messageUtils.getFormattedMessage("buy.fail-amount", item, amount);
     }
 
-    public String buyFailedSpace(String item, final int amount, final String sale) {
-        return plugin.messageUtils.getFormattedMessage("buy.fail-space", item, amount, sale);
+    public String buyFailedSpace(String item, final int amount) {
+        return plugin.messageUtils.getFormattedMessage("buy.fail-space", item, amount);
     }
 
     public String buySuccess(String item, final int amount, final String sale) {
@@ -140,7 +140,7 @@ public class Responses {
             p.sendMessage(buySuccess("Stick", 7, "$14.13"));
             p.sendMessage(buyFailedAmount("White Wool", 4));
             p.sendMessage(buyFailedCost("$42.13", "$4.12"));
-            p.sendMessage(buyFailedSpace("Iron Ingot", 64, "$701.76"));
+            p.sendMessage(buyFailedSpace("Iron Ingot", 64));
             p.sendMessage(itemCost("Apple", 4, "$12.10"));
             p.sendMessage(holdingNothing());
             p.sendMessage(itemInvalid());

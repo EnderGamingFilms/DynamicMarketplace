@@ -46,7 +46,7 @@ public class HookPlaceholderAPI extends PlaceholderExpansion {
             str = parseAgs(params); // Remove prefix from string
             if (str.matches("([A-z])+?(_)?.+")) { // Parse proper materials
                 splitStr = str.split(",");
-                if (plugin.marketData.itemExists(splitStr[0], true) && splitStr.length > 1) {
+                if (plugin.marketData.contains(splitStr[0], true) && splitStr.length > 1) {
                     item = plugin.marketData.getItem(splitStr[0], true);
                     if (splitStr[1].matches("^\\d+$")) {// Only parse positive integers
                         int amount = Integer.parseInt(splitStr[1]);
@@ -59,7 +59,7 @@ public class HookPlaceholderAPI extends PlaceholderExpansion {
             str = parseAgs(params); // Remove prefix from string
             if (str.matches("([A-z])+?(_)?.+")) { // Parse proper materials
                 splitStr = str.split(",");
-                if (plugin.marketData.itemExists(splitStr[0], true) && splitStr.length > 1) {
+                if (plugin.marketData.contains(splitStr[0], true) && splitStr.length > 1) {
                     item = plugin.marketData.getItem(splitStr[0], true);
                     if (splitStr[1].matches("^\\d+$")) {// Only parse positive integers
                         int amount = Integer.parseInt(splitStr[1]);
@@ -70,18 +70,18 @@ public class HookPlaceholderAPI extends PlaceholderExpansion {
             }
         } else if (params.startsWith("friendly_")) {
             str = parseAgs(params); // Remove prefix from string
-            if (plugin.marketData.itemExists(str, true)) { // Parse proper materials
+            if (plugin.marketData.contains(str, true)) { // Parse proper materials
                 item = plugin.marketData.getItem(str, true);
                 return item.getFriendly();
             }
         } else if (params.startsWith("amount_")) {
             str = parseAgs(params); // Remove prefix from string
-            if (plugin.marketData.itemExists(str, true)) { // Parse proper materials
+            if (plugin.marketData.contains(str, true)) { // Parse proper materials
                 item = plugin.marketData.getItem(str, true);
                 return String.valueOf(item.getAmount());
             }
         } else if (params.equalsIgnoreCase("hand")) {
-            if (plugin.marketData.itemExists(player.getItemInHand().getType().getKey().getKey(), true)) {
+            if (plugin.marketData.contains(player.getItemInHand().getType().getKey().getKey(), true)) {
                 item = plugin.marketData.getItem(player.getItemInHand().getType(), true);
 //                double price = (item.getSellPrice(player.getItemInHand().getAmount())); // Change back to sell
                 return plugin.economy.format(item.getBuyPrice());

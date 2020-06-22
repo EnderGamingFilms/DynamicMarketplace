@@ -21,7 +21,7 @@ public class InventoryListener implements Listener {
     private final DynamicMarketplace instance;
     public static HashMap<Integer, Boolean> slotHashMap = new HashMap<>();
     public static boolean realClose = false;
-    public static final int[] Allowed = {10,11,12,13,14,19,20,21,22,23,28,29,30,31,32};
+    public static final int[] Allowed = {10, 11, 12, 13, 14, 19, 20, 21, 22, 23, 28, 29, 30, 31, 32};
 
     public InventoryListener(@NotNull final DynamicMarketplace instance) {
         this.instance = instance;
@@ -39,17 +39,16 @@ public class InventoryListener implements Listener {
     public void onPlayerClickInventory(InventoryClickEvent event) {
         if (event.getClickedInventory() != null && event.getView().getTitle().equals(CollectorGUI.inventory_name)) { // Check GUI inventory name & if clicked outside
             if (!slotHashMap.containsKey(event.getSlot())) { // Click area outside allowed space
-                if (event.getCurrentItem() == null) { /*System.out.println("getCurrentItem = null");*/ return; } // If clicked slot is null escape
-                if (event.getClickedInventory().getType() != InventoryType.PLAYER){ // Handlers for GUI inventory clicks
+                if (event.getCurrentItem() == null) { /*System.out.println("getCurrentItem = null");*/
+                    return;
+                } // If clicked slot is null escape
+                if (event.getClickedInventory().getType() != InventoryType.PLAYER) { // Handlers for GUI inventory clicks
                     event.setCancelled(true);
-//                    if (event.getCurrentItem() != null)
                     instance.collectorGUI.clicked((Player) event.getWhoClicked(), event.getSlot(), event.getCurrentItem(), event.getInventory());
                 } else { // Handlers for player inventory clicks
-//                    if (event.getCurrentItem() != null) { // If clicked slot isn't null run checks
-                        if(instance.operationsManager.itemChecks(event.getCurrentItem()) != 6) { // If item passes all the checks continue
-                            event.setCancelled(true);
-                        }
-//                    }
+                    if (!instance.operations.itemChecks(event.getCurrentItem())) { // If item passes all the checks continue
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
@@ -92,8 +91,8 @@ public class InventoryListener implements Listener {
         String title = event.getView().getTitle();
         if (title.equals(CollectorGUI.inventory_name)) {
             if (!realClose) {
-                PlayerInteractions.collectorFailed((Player) event.getPlayer());
                 instance.collectorGUI.doCheck(event.getInventory(), (Player) event.getPlayer());
+                instance.messageUtils.send((Player) event.getPlayer(), instance.respond.collectorFailed());
             }
         }
     }

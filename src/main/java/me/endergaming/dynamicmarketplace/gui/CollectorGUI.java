@@ -2,8 +2,6 @@ package me.endergaming.dynamicmarketplace.gui;
 
 import org.jetbrains.annotations.NotNull;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
-import me.endergaming.dynamicmarketplace.utils.PlayerInteractions;
-import me.endergaming.dynamicmarketplace.ShopOpperations;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -116,6 +114,7 @@ public class CollectorGUI {
         }
     }
 
+    // This is where selling items happens
     public void clicked(Player player, int slot, ItemStack clicked, Inventory inv) {
         String cItem = clicked.getItemMeta().getDisplayName();
         if (inv == null) { // Check if the given inventor is null - It shouldn't be
@@ -133,10 +132,9 @@ public class CollectorGUI {
                 for (int s : InventoryListener.Allowed) { if (inv.getItem(s) != null) { empty = false; break; } }
 
                 if (!empty) { // There is stuff
-                    PlayerInteractions.collectorSuccess(player);
-                    instance.operationsManager.collectorSell(player, inv);
+                    instance.operations.makeSale(player, inv, instance.operations.COLLECTOR);
                 } else { // There was nothing
-                    PlayerInteractions.collectorEmpty(player);
+                    instance.messageUtils.send(player, instance.respond.collectorFailed());
                 }
 
                 player.closeInventory();

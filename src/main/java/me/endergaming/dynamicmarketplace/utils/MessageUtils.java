@@ -1,5 +1,6 @@
 package me.endergaming.dynamicmarketplace.utils;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.jetbrains.annotations.NotNull;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Bukkit;
@@ -109,7 +110,6 @@ public class MessageUtils {
     }
 
     public String replace(String msg, String item, int amount) {
-        item = capitalize(item);
         msg = msg.replace("%item%", item);
         msg = msg.replace("%amount%", String.valueOf(amount));
         return msg;
@@ -122,7 +122,6 @@ public class MessageUtils {
     }
 
     public String replace(String msg, String item, int amount, String cost) {
-        item = capitalize(item);
         msg = msg.replace("%item%", item);
         msg = msg.replace("%amount%", String.valueOf(amount));
         msg = msg.replace("%cost%", String.valueOf(cost));
@@ -153,6 +152,14 @@ public class MessageUtils {
         }
         p.sendMessage(plugin.respond.invalidInput());
         return 1;
+    }
+
+    public void send(Player player, String message) {
+        player.sendMessage(message);
+    }
+
+    public void send(Player player, BaseComponent message) {
+        player.spigot().sendMessage(message);
     }
 
     /**

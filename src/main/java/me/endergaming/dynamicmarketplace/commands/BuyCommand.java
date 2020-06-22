@@ -2,14 +2,13 @@ package me.endergaming.dynamicmarketplace.commands;
 
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import me.endergaming.dynamicmarketplace.utils.PlayerInteractions;
-import me.endergaming.dynamicmarketplace.SaveData;
-import me.endergaming.dynamicmarketplace.ShopOpperations;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BuyCommand extends BaseCommand{
+public class BuyCommand extends BaseCommand {
     private static DynamicMarketplace instance = DynamicMarketplace.getInstance();
+
     public BuyCommand(String command) {
         super(command);
     }
@@ -30,14 +29,12 @@ public class BuyCommand extends BaseCommand{
         str = String.join(" ", str).replace("buy ", "").split(" ");
 
         // Command actions
-        if (SaveData.validItem(str[0], player)) {
+        if (instance.marketData.contains(str[0], true)) {
             int amount = (str.length == 1) ? 1 : instance.messageUtils.checkAmount(str[1], player);
-            if (amount > 0) {
-                instance.operationsManager.buy(player, str[0], amount);
-                SaveData.saveMarket();
-            }
+            if (amount > 64) amount = 64; // Limit purchases to 1 stack
+            instance.operations.makePurchase(player, str[0], amount);
         } else {
-            PlayerInteractions.itemInvalid(player, str[0]);
+            instance.messageUtils.send(player, instance.respond.itemInvalid());
         }
     }
 
@@ -54,8 +51,10 @@ public class BuyCommand extends BaseCommand{
         }
 
         if (args.length == 0) {
-            sender.sendMessage(cmd.getUsage()); return false;
+            PlayerInteractions.getHelp((Player) sender, cmd.getName());
+            return false;
         }
+
         run((Player) sender, args, cmd.getName());
 
         return true;

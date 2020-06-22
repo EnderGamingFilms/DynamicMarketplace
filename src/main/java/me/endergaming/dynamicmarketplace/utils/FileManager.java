@@ -59,7 +59,7 @@ public class FileManager {
         readMaterialData();
         readRecipeData();
         // Generate pricing
-        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial()));
+        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial().getKey().getKey()));
     }
 
     /**
@@ -207,7 +207,7 @@ public class FileManager {
             FileWriter fileWriter = new FileWriter(materialsFile, false);
             for (int i = 0; i < dataMap.size(); ++i) {
                 item = plugin.marketData.getItem(dataMap.get(i));
-                fileWriter.write(String.format("%s: %s\n", item.getMaterial(), item.getAmount()));
+                fileWriter.write(String.format("%s: %s\n", item.getMaterial().getKey().getKey(), item.getAmount()));
             }
 
             // Close files
@@ -231,7 +231,7 @@ public class FileManager {
         FileWriter fileWriter = new FileWriter(listFile, false);
         fileWriter.write("# These items are not inside materials.yml or recipes.yml, please add them if you want to generate prices\n");
         for (Material m : Material.values()) {
-            if (!plugin.marketData.itemExists(m, true)) {
+            if (!plugin.marketData.contains(m, true)) {
                 fileWriter.write(String.format("%s\n", m.getKey().getKey()));
             }
         }
@@ -297,22 +297,25 @@ public class FileManager {
         readMaterialData();
         readRecipeData();
         // Stage 5 - Re-calculate buy & sell prices for all items
-        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial()));
+        calcItemData();
     }
 
-    public void reloadItemData() {
-        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial()));
+    public void calcItemData() {
+        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial().getKey().getKey()));
     }
 
-    public void reloadAllContainingItem(String item) {
-        plugin.marketData.getDataMap().forEach((k, v) -> {
-            if (v.getRecipe() != null && v.getRecipe().contains(item)) {
-                // Re-Calculate Prices
-                plugin.calculations.calcPrice(v.getMaterial());
-                // Recursively update items that require other items that were previously updated
-                reloadAllContainingItem(v.getMaterial());
-            }
-        });
-    }
+//    public void reloadAllContainingItem(Material material) {
+//        for (Map.Entry<Material, MarketData.MarketItem> entry : plugin.marketData.getDataMap().entrySet()) {
+//            if (entry.getValue() == null) continue;
+//
+//            MarketData.MarketItem item = entry.getValue();
+//            if (item.getRecipe() != null && item.getRecipe().contains(material.getKey().getKey())) {
+//                // Re-Calculate Prices
+//                plugin.calculations.calcPrice(item.getMaterial().getKey().getKey());
+//                // Recursively update items that require other items that were previously updated
+//                reloadAllContainingItem(item.getMaterial());
+//            }
+//        }
+//    }
     //------------------------------------------
 }

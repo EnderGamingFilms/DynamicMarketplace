@@ -3,6 +3,7 @@ package me.endergaming.dynamicmarketplace.commands;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import me.endergaming.dynamicmarketplace.utils.PlayerInteractions;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -62,7 +63,7 @@ public class MarketCommand extends BaseCommand {
             } else {
                 if (args.length > 1) {
                     if (args[1].equalsIgnoreCase("reload")) {
-                        instance.fileManager.reloadItemData();
+                        instance.fileManager.calcItemData();
                         instance.marketData.getDataMap().forEach((k, v) -> System.out.println("TEST | All Prices (" +
                                 v.getMaterial() + "): " + v.getBuyPrice()));
                     } else if (args[1].equalsIgnoreCase("amount")) {
@@ -70,18 +71,14 @@ public class MarketCommand extends BaseCommand {
                                 instance.marketData.getItem(player.getItemInHand().getType().toString()).getAmount()));
                     } else if (args[1].equalsIgnoreCase("load")) {
                         instance.fileManager.readMaterialData();
-                    } else if (args[1].equalsIgnoreCase("buy")) {
-                        player.sendMessage(instance.messageUtils.colorize("&eMarket Buy Price: &a" +
-                                instance.marketData.getItem(player.getItemInHand().getType().toString())
-                                        .getBuyPrice(player.getItemInHand().getAmount())));
-                    } else if (args[1].equalsIgnoreCase("sell")) {
-                        player.sendMessage(instance.messageUtils.colorize("&eMarket Sell Price: &c" +
-                                instance.marketData.getItem(player.getItemInHand().getType().toString())
-                                        .getSellPrice(player.getItemInHand().getAmount())));
                     } else if (args[1].equalsIgnoreCase("missing")) {
                         instance.fileManager.outputMissingMats();
+                    } else if (args[1].equalsIgnoreCase("sellall")) {
+                        instance.operations.makeSale(player, player.getInventory(), instance.operations.COLLECTOR);
+                    }  else if (args[1].equalsIgnoreCase("remove")) {
+                        instance.operations.removeFromInventory(player.getInventory(), player.getInventory().getContents(), Material.APPLE, 16);
                     } else if (args[1].equalsIgnoreCase("update")) {
-                        instance.fileManager.reloadAllContainingItem(player.getItemInHand().getType().toString().toLowerCase());
+                        instance.fileManager.calcItemData();
                         player.sendMessage(instance.messageUtils.colorize("&eUpdated Price: &a") +
                                 instance.marketData.getItem(player.getItemInHand().getType().toString())
                                         .getSellPrice());

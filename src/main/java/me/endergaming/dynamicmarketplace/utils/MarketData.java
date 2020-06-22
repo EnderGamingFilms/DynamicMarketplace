@@ -1,5 +1,6 @@
 package me.endergaming.dynamicmarketplace.utils;
 
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Material;
@@ -23,19 +24,19 @@ public class MarketData {
     public static class MarketItem {
         private double amount;
         private double basePrice;
-        private String material;
+        private Material material;
         private String friendlyName;
         private String recipe;
 
         public MarketItem(Material material, String friendlyName, double amount) {
             this.amount = amount;
-            this.material = material.getKey().getKey();
+            this.material = material;
             this.friendlyName = friendlyName;
         }
 
         public MarketItem(Material material, String friendlyName, double amount, String recipe) {
             this.amount = amount;
-            this.material = material.getKey().getKey();
+            this.material = material;
             this.friendlyName = friendlyName;
             this.recipe = recipe;
         }
@@ -53,7 +54,7 @@ public class MarketData {
         }
 
         public double getSellPrice(int purchaseAmount) {
-            return purchaseAmount * this.basePrice * getTax();
+            return purchaseAmount * this.basePrice * 1/getTax();
         }
 
         public double getSellPrice() {
@@ -68,7 +69,7 @@ public class MarketData {
             return friendlyName;
         }
 
-        public String getMaterial() {
+        public Material getMaterial() {
             return material;
         }
 
@@ -88,7 +89,7 @@ public class MarketData {
             this.friendlyName = friendlyName;
         }
 
-        public void setMaterial(String material) {
+        public void setMaterial(Material material) {
             this.material = material;
         }
 
@@ -136,9 +137,13 @@ public class MarketData {
      * @return MarketItem - Used to access item's market information
      */
     public MarketItem getItem(Material material, boolean silent) {
-        if (itemExists(material, silent))
+        if (contains(material, silent))
             return marketMap.get(material);
         return new MarketItem(Material.AIR, "", 0);
+    }
+    // TODO: Clean up all the overloaded getItems and reduce copy/pasted code
+    public MarketItem getItem(ItemStack itemStack) {
+        return getItem(itemStack.getType(), false);
     }
 
     /**
@@ -220,14 +225,15 @@ public class MarketData {
      * @param material org.bukkit.Material
      * @return boolean - Will return true if the material was found
      */
-    public boolean itemExists(Material material) {
+    public boolean contains(Material material) {
         if (!marketMap.containsKey(material)) {
             plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage &3(" + material.getKey().getKey() + ")");
             return false;
         }
         return true;
     }
-    public boolean itemExists(Material material, boolean silent) {
+
+    public boolean contains(Material material, boolean silent) {
         if (!marketMap.containsKey(material)) {
             if (!silent) {
                 plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage &3(" + material.getKey().getKey() + ")");
@@ -243,7 +249,7 @@ public class MarketData {
      * @param materialName (String) org.bukkit.Material
      * @return boolean - Will return true if the material was found
      */
-    public boolean itemExists(String materialName) {
+    public boolean contains(String materialName) {
         if (resolveItem(materialName)) {
             plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to put incorrect material into market storage. &3(" + materialName + ")");
             return false;
@@ -265,7 +271,7 @@ public class MarketData {
      * @param silent       Run this function without causing console messages
      * @return boolean - Will return true if the material was found
      */
-    public boolean itemExists(String materialName, boolean silent) {
+    public boolean contains(String materialName, boolean silent) {
         if (resolveItem(materialName)) {
             if (!silent) {
                 plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to put incorrect material into market storage. &3(" + materialName + ")");
@@ -291,6 +297,7 @@ public class MarketData {
      * @return boolean - Will return true if the input material is correct
      */
     public boolean resolveItem(String material) {
+        assert material != null;
         final Material resolved = Material.matchMaterial(material);
         return resolved == null;
     }
