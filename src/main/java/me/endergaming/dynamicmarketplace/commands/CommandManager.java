@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CommandManager {
     private final DynamicMarketplace plugin;
-    List<BaseCommand> commandList = new ArrayList<>();
+    public List<BaseCommand> commandList = new ArrayList<>();
     public MarketCommand marketCmd;
     public BuyCommand buyCmd;
     public SellCommand sellCmd;
@@ -32,10 +32,12 @@ public class CommandManager {
         commandList.add(sellHandCmd = new SellHandCommand("sellhand", plugin));
         commandList.add(itemInfoCmd = new ItemInfoCommand("iteminfo", plugin));
         commandList.add(worthCmd = new WorthCommand("worth", plugin));
+
+        // Register Sub-Commands "/market command"
         reloadCmd = new ReloadCommand(plugin);
         collectorCmd = new CollectorCommand(plugin);
 
-        // Register All Commands
+        // Register BaseCommands "/command"
         for (BaseCommand command : commandList) {
             command.register();
         }

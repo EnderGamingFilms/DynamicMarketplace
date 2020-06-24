@@ -27,6 +27,11 @@ public class ReloadCommand {
     }
 
     public void load(Player player) {
+        if (!player.hasPermission("market.reload")) {
+            plugin.messageUtils.send(player, plugin.respond.noPerms());
+            return;
+        }
+
         long start = System.currentTimeMillis();
         plugin.fileManager.loadAll();
         long end = System.currentTimeMillis();

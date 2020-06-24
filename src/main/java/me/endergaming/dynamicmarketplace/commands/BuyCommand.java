@@ -21,7 +21,7 @@ public class BuyCommand extends BaseCommand {
         }
 
         if (args.length == 1) {
-//            PlayerInteractions.getHelp(player, cmd);
+            plugin.messageUtils.send(player, plugin.respond.getHelp(cmd));
             return;
         }
 
@@ -30,7 +30,7 @@ public class BuyCommand extends BaseCommand {
         str = String.join(" ", str).replace("buy ", "").split(" ");
 
         // Command actions
-        if (plugin.marketData.contains(str[0], true)) {
+        if (plugin.marketData.contains(str[0], !plugin.fileManager.debug)) {
             int amount = (str.length == 1) ? 1 : plugin.messageUtils.checkAmount(str[1], player);
             if (amount > 64) amount = 64; // Limit purchases to 1 stack
             plugin.operations.makePurchase(player, str[0], amount);
@@ -52,11 +52,11 @@ public class BuyCommand extends BaseCommand {
         }
 
         if (args.length == 0) {
-//            PlayerInteractions.getHelp((Player) sender, cmd.getName());
+            plugin.messageUtils.send(sender, plugin.respond.getHelp(label));
             return false;
         }
 
-        run((Player) sender, args, cmd.getName());
+        run((Player) sender, args, label);
 
         return true;
     }

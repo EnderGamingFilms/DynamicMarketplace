@@ -32,7 +32,7 @@ public class Operations {
             plugin.messageUtils.send(player, plugin.respond.buyFailedCost(getFormatPrice(marketItem.getBuyPrice(amount)), String.valueOf(balance)));
         } else if (marketItem.getAmount() != -1 && marketItem.getAmount() < amount) {
             // There are not enough items in the market to sell to the player
-            plugin.messageUtils.send(player, plugin.respond.buyFailedAmount(marketItem.getFriendly(), (int) marketItem.getBuyPrice(amount)));
+            plugin.messageUtils.send(player, plugin.respond.buyFailedAmount(marketItem.getFriendly(), amount));
         } else {
             int oldAmount = amount;
             // Everything is valid at this point so make marketItem
@@ -68,7 +68,7 @@ public class Operations {
             }
             // Update Market Items
             if (marketItem.getAmount() != -1) { // Update basic items
-                marketItem.setAmount(marketItem.getAmount() + purchased);
+                marketItem.setAmount(marketItem.getAmount() - purchased);
             } else { // Update crafted items
                 // Update base item amounts from items with recipes
                 if (marketItem.hasRecipe()) {
@@ -101,7 +101,7 @@ public class Operations {
         removeFromInventory(player.getInventory(), player.getInventory().getContents(), marketItem.getMaterial(), Math.min(found, amount));
         // Update Market Items
         if (marketItem.getAmount() != -1) { // Update basic items
-            marketItem.setAmount(marketItem.getAmount() + found);
+            marketItem.setAmount(marketItem.getAmount() + Math.min(found, amount));
         } else { // Update crafted items
             // Update base item amounts from items with recipes
             if (marketItem.hasRecipe()) {
@@ -146,7 +146,7 @@ public class Operations {
             for (ItemStack stack : itemStackList) {
                 marketItem = plugin.marketData.getItem(stack);
                 if (marketItem.getAmount() != -1) { // Update basic items
-                    marketItem.setAmount(marketItem.getAmount() - stack.getAmount());
+                    marketItem.setAmount(marketItem.getAmount() + stack.getAmount());
                 } else { // Update crafted items
                     // Update base item amounts from items with recipes
                     if (marketItem.hasRecipe()) {
@@ -162,12 +162,12 @@ public class Operations {
         } else if (actionSet.equals(COMMAND)) {
             double totalPrice = 0.0;
             int found = 0;
-            Material matInHand = player.getItemInHand().getType();
-
+            Material item = plugin.cmdManager.sellAllCmd.getItemToSell();
+            MarketData.MarketItem marketItem = plugin.marketData.getItem(item);
             for (ItemStack stack : player.getInventory()) {
                 if (stack == null) continue;
 
-                if (stack.getType() == matInHand) {
+                if (stack.getType() == item) {
                     if (itemChecks(stack)) {
                         totalPrice += plugin.marketData.getItem(stack.getType(), !plugin.fileManager.debug).getSellPrice(stack.getAmount());
                         // Remove items from the inventory
@@ -180,8 +180,19 @@ public class Operations {
             if (found == 0) {
                 plugin.messageUtils.send(player, plugin.respond.holdingNothing());
             } else {
-                plugin.messageUtils.send(player, plugin.respond.sellSuccess(plugin.marketData.getItem(matInHand, true).getFriendly(), found, getFormatPrice(totalPrice)));
+                // Update Market Items
+                if (marketItem.getAmount() != -1) { // Update basic items
+                    marketItem.setAmount(marketItem.getAmount() + found);
+                } else { // Update crafted items
+                    // Update base item amounts from items with recipes
+                    if (marketItem.hasRecipe()) {
+                        updateFromRecipe(marketItem.getRecipe(), found, true);
+                    }
+                }
+                plugin.fileManager.calcItemData();
+                // Deposit Profits & Send Messages
                 plugin.economy.depositPlayer(player, totalPrice);
+                plugin.messageUtils.send(player, plugin.respond.sellSuccess(plugin.marketData.getItem(item, true).getFriendly(), found, getFormatPrice(totalPrice)));
             }
         }
     }
@@ -270,7 +281,7 @@ public class Operations {
     }
 
     public void getWorth(Player player, ItemStack item) {
-        double price = plugin.marketData.getItem(item).getBuyPrice();
+        double price = plugin.marketData.getItem(item).getSellPrice(item.getAmount());
         final String itemName = plugin.marketData.getItem(item).getFriendly();
         final String message = plugin.respond.itemWorth(itemName, item.getAmount(), getFormatPrice(price));
         plugin.messageUtils.send(player, message);

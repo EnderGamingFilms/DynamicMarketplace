@@ -1,11 +1,11 @@
 ## Commands
-<code>/market reload - Reloads config</code><br />
-<code>/market cost \<item> \<amount> - Gets the cost of an item</code><br />
+<code>/market [reload/load] - Either load materials.yml or reload all files</code><br />
 <code>/market collector [playerName] - Opens the collector gui</code><br />
 <code>/buy \<item> \<amount> - Buy an item from the market</code><br />
 <code>/sell \<item> \<amount> - Sells an item to the market</code><br />
 <code>/sellall \<item> - Sells all of an item in your inventory</code><br />
-<code>/iteminfo \<item> - Get info on a specific item</code><br />
+<code>/iteminfo \<item> - Get all market info on a specific item</code><br />
+<code>/worth \<item> \<amount> - Get the sale price of the held item</code><br />
 <code>/sellhand - Sells the item in your hand and that amount</code>
 
 ## Permissions
@@ -13,12 +13,12 @@
 <code>market.command.\*</code> - Admin<br />
 <code>market.reload</code> - Admin<br />
 <code>market.command.buy</code> - Admin<br />
-<code> market.command.sell</code> - Admin<br />
-<code> market.command.sellall</code> - Admin<br />
-<code> market.command.sellhand</code> - Admin<br />
+<code>market.command.sell</code> - Admin<br />
+<code>market.command.sellall</code> - Admin<br />
+<code>market.command.sellhand</code> - Admin<br />
 <code>market.command.collector</code> - Admin<br />
-<code> market.command.info</code> - Admin<br />
-<code>market.command.cost</code> - Admin<br />
+<code>market.command.info</code> - Admin<br />
+<code>market.command.worth</code> - Admin<br />
 
 ## PlaceHolderAPI Compatible
 Make sure **PAPI** is installed! Download and install the latest [PlaceHolderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)

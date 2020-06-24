@@ -1,7 +1,6 @@
 package me.endergaming.dynamicmarketplace.commands;
 
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MarketCommand extends BaseCommand {
     private final DynamicMarketplace plugin;
+
     public MarketCommand(String command, @NotNull final DynamicMarketplace instance) {
         super(command);
         this.plugin = instance;
@@ -25,7 +25,7 @@ public class MarketCommand extends BaseCommand {
                     if (args.length == 2) {
                         plugin.cmdManager.collectorCmd.runFromConsole(sender, args); // For console-only
                     } else {
-                        sender.sendMessage(ChatColor.YELLOW + "/market collector [playerName] " + ChatColor.WHITE + "- Opens the collector gui");
+                        plugin.messageUtils.send(sender, plugin.respond.getHelp(label));
                     }
                 } else {
                     plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
@@ -33,18 +33,17 @@ public class MarketCommand extends BaseCommand {
             }
             return true;
         }
+
         // Player run commands
         Player player = (Player) sender;
 
         // Return help menu if no args are passed
         if (args.length == 0) {
-//            PlayerInteractions.getHelp(player);
+            plugin.messageUtils.send(player, plugin.respond.getHelp(player));
             return true;
         }
 
-        if (args[0].toLowerCase().matches("help|hlp|h|plz")) {
-//            PlayerInteractions.getHelp(player);
-        } else if (args[0].toLowerCase().matches("reload|rl")) {
+        if (args[0].toLowerCase().matches("reload|rl")) {
             plugin.cmdManager.reloadCmd.run(player);
 
         } else if (args[0].toLowerCase().matches("load")) {
@@ -60,6 +59,7 @@ public class MarketCommand extends BaseCommand {
         } else if (args[0].equalsIgnoreCase("buy")) {
             plugin.cmdManager.buyCmd.run(player, args, args[0]);
         } else if (args[0].equalsIgnoreCase("test")) { // |------------- CURRENT TEST COMMAND -------------|
+            if (!player.hasPermission("market.*")) return false;
             // Stuff Here
             if (args.length > 2) {
                 plugin.marketData.getItem(args[1]).setAmount(Double.parseDouble(args[2]));
@@ -77,9 +77,11 @@ public class MarketCommand extends BaseCommand {
                         plugin.fileManager.readMaterialData();
                     } else if (args[1].equalsIgnoreCase("missing")) {
                         plugin.fileManager.outputMissingMats();
+                    } else if (args[1].equalsIgnoreCase("help")) {
+                        plugin.messageUtils.send(player, plugin.respond.getHelp(player));
                     } else if (args[1].equalsIgnoreCase("sellall")) {
                         plugin.operations.makeSale(player, player.getInventory(), plugin.operations.COLLECTOR);
-                    }  else if (args[1].equalsIgnoreCase("remove")) {
+                    } else if (args[1].equalsIgnoreCase("remove")) {
                         plugin.operations.removeFromInventory(player.getInventory(), player.getInventory().getContents(), Material.APPLE, 16);
                     } else if (args[1].equalsIgnoreCase("update")) {
                         plugin.fileManager.calcItemData();
@@ -96,16 +98,16 @@ public class MarketCommand extends BaseCommand {
             }
         } else if (args[0].equalsIgnoreCase("sell")) {
             plugin.cmdManager.sellCmd.run(player, args, args[0]);
-        } else if (args[0].equalsIgnoreCase("cost")) {
-            plugin.cmdManager.worthCmd.run(player, args);
+        } else if (args[0].equalsIgnoreCase("worth")) {
+            plugin.cmdManager.worthCmd.run(player);
         } else if (args[0].equalsIgnoreCase("sellhand")) {
             plugin.cmdManager.sellHandCmd.run(player);
         } else if (args[0].toLowerCase().matches("sellall")) {
-            plugin.cmdManager.sellAllCmd.run(player);
+            plugin.cmdManager.sellAllCmd.run(player, args);
         } else if (args[0].toLowerCase().matches("iteminfo|info|item")) {
             plugin.cmdManager.itemInfoCmd.run(player, args, args[0]);
         } else {
-//            PlayerInteractions.getHelp(player);
+            plugin.messageUtils.send(player, plugin.respond.getHelp(player));
             return false;
         }
         return true;

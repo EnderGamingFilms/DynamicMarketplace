@@ -71,8 +71,8 @@ public class MessageUtils {
         return format(grabRaw(path));
     }
 
-    public String getFormattedMessage(final String path, final boolean extra) {
-        return format(grabRaw(path), extra);
+    public String getFormattedMessage(final String path, final boolean hasPrefix) {
+        return format(grabRaw(path), hasPrefix);
     }
 
     public String getFormattedMessage(final String path, final int tax, final boolean hasPrefix) {

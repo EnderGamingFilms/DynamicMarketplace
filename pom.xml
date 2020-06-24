@@ -6,7 +6,7 @@
 
     <groupId>org.dynamicmarketplace</groupId>
     <artifactId>dynamic-marketplace</artifactId>
-    <version>5.3.1</version>
+    <version>6.0.0</version>
     <packaging>jar</packaging>
 
     <name>Dynamic Marketplace</name>

@@ -3,7 +3,7 @@ no-permission:
   message: "&cYou do not have permission for this command."
   prefix: true
 non-player: "&4Only players can run this command."
-item-worth: "&a%amount% %item%(s)&e currently costs &a%cost%"
+item-worth: "&a%amount% %item%(s)&e is currently worth &a%cost%"
 invalid-input: "&cInput value is invalid."
 item-errors:
   invalid: "&eThis item does not seem to be in the Market."
@@ -27,3 +27,13 @@ collector:
   total: "&6Total Worth: %profit%"
   adjusted: "&aYou Received: %profit%"
   invalid-player: "&cThe player you entered is offline or invalid."
+help:
+  header: "&9-------------------- &aMarket Help &9--------------------"
+  reload: "&6/market [reload/load]&f - &eEither load materials.yml or reload all files"
+  collector: "&6/market collector&f [playerName] - &eOpens the collector gui"
+  buy: "&6/buy&f <item> <amount> - &eBuy an item from the market"
+  sell: "&6/sell&f <item> <amount> - &eSells an item to the market"
+  sellall: "&6/sellall&f <item> - &eSells all of an item in your inventory (held item)"
+  iteminfo: "&6/iteminfo&f <item> - &eGet all market info on a specific item"
+  worth: "&6/worth&f - &eGet the sale price of the held item"
+  sellhand: "&6/sellhand&f - &eSell item stack you are holding"

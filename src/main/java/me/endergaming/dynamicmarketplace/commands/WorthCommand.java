@@ -14,19 +14,14 @@ public class WorthCommand extends BaseCommand {
         this.plugin = instance;
     }
 
-    public void run(Player player, String[] args) {
+    public void run(Player player) {
         if (!player.hasPermission("market.command.worth")) {
             plugin.messageUtils.send(player, plugin.respond.noPerms());
             return;
         }
 
-        if (args.length > 0) {
-//            PlayerInteractions.getHelp(player, args[0]);
-            return;
-        }
-
         // Command Actions
-        if (plugin.marketData.contains(player.getItemInHand().getType(), true)) {
+        if (plugin.marketData.contains(player.getItemInHand().getType(), !plugin.fileManager.debug)) {
             plugin.operations.getWorth(player, player.getItemInHand());
         } else {
             plugin.messageUtils.send(player, plugin.respond.itemInvalid());
@@ -45,12 +40,7 @@ public class WorthCommand extends BaseCommand {
             return false;
         }
 
-        if (args.length > 0) {
-//            PlayerInteractions.getHelp((Player) sender, cmd.getName());
-            return false;
-        }
-
-        run((Player) sender, args);
+        run((Player) sender);
 
         return true;
     }

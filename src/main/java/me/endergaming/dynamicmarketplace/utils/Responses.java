@@ -1,11 +1,13 @@
 package me.endergaming.dynamicmarketplace.utils;
 
-import org.jetbrains.annotations.NotNull;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import javax.xml.soap.Text;
 
 public class Responses {
     public static final boolean BOOLEAN = false;
@@ -65,6 +67,27 @@ public class Responses {
             return plugin.messageUtils.format("&eMissing materials file &7(unresolved.yml)&e was successfully created!");
         }
         return plugin.messageUtils.format("&cThere was an error creating missing materials file &7(unresolved.yml)");
+    }
+
+    public TextComponent itemInfo(String item) {
+        TextComponent message = new TextComponent();
+        message.addExtra(plugin.messageUtils.colorize("&e---------- &6Market &e----------" + MessageUtils.NL));
+        message.addExtra(plugin.messageUtils.colorize("&fItem: &b" + plugin.marketData.getItem(item).getFriendly() + MessageUtils.NL));
+        if (plugin.marketData.getItem(item).hasRecipe()) {
+            message.addExtra(plugin.messageUtils.colorize("&f*This is a crafted item." + MessageUtils.NL));
+        } else {
+            message.addExtra(plugin.messageUtils.colorize("&fQuantity: &b~" +
+                    plugin.marketData.getItem(item).getAmount()) + MessageUtils.NL);
+        }
+        message.addExtra(plugin.messageUtils.colorize("&fBuy  : &a" +
+                plugin.economy.format(plugin.marketData.getItem(item).getBuyPrice(1)) + "&f each, &a" +
+                plugin.economy.format(plugin.marketData.getItem(item).getBuyPrice(64)) + "&f for 64" + MessageUtils.NL));
+        message.addExtra(plugin.messageUtils.colorize("&fSell  : &a" +
+                plugin.economy.format(plugin.marketData.getItem(item).getSellPrice(1)) + "&f each, &a" +
+                plugin.economy.format(plugin.marketData.getItem(item).getSellPrice(64)) + "&f for 64" + MessageUtils.NL));
+        message.addExtra(plugin.messageUtils.colorize("&e---------------------------"));
+
+        return message;
     }
 
     //------------------------------------------
@@ -127,6 +150,36 @@ public class Responses {
 
     public String collectorTax(final int tax) {
         return plugin.messageUtils.getFormattedMessage("collector.profit", tax, false);
+    }
+    //------------------------------------------
+
+    /** |-------------- Help/Usage Responses --------------| */
+    public String getHelp(final String cmd) {
+        return plugin.messageUtils.getFormattedMessage("help." + cmd, false);
+    }
+
+    public TextComponent getHelp(Player player) {
+        TextComponent message = new TextComponent();
+        message.addExtra(plugin.messageUtils.getFormattedMessage("help.header", false) + MessageUtils.NL);
+        if (player.hasPermission("market.reload"))
+            message.addExtra(getHelp("reload") + MessageUtils.NL);
+        if (player.hasPermission("market.command.collector"))
+            message.addExtra(getHelp("collector") + MessageUtils.NL);
+        if (player.hasPermission("market.command.buy"))
+            message.addExtra(getHelp("buy") + MessageUtils.NL);
+        if (player.hasPermission("market.command.sell"))
+            message.addExtra(getHelp("sell") + MessageUtils.NL);
+        if (player.hasPermission("market.command.sellall"))
+            message.addExtra(getHelp("sellall") + MessageUtils.NL);
+        if (player.hasPermission("market.command.info"))
+            message.addExtra(getHelp("iteminfo") + MessageUtils.NL);
+        if (player.hasPermission("market.command.worth"))
+            message.addExtra(getHelp("worth") + MessageUtils.NL);
+        if (player.hasPermission("market.command.sellhand"))
+            message.addExtra(getHelp("sellhand") + MessageUtils.NL);
+        message.addExtra(plugin.messageUtils.colorize("       &7Author: " + plugin.getDescription().getAuthors().get(0) +
+                "&7       |       Version: " + plugin.getDescription().getVersion()));
+        return message;
     }
     //------------------------------------------
 }

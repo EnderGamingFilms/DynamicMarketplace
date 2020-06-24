@@ -21,7 +21,7 @@ public class SellHandCommand extends BaseCommand {
         }
 
         // Command Actions
-        if (plugin.marketData.contains(player.getItemInHand().getType(), true)) {
+        if (plugin.marketData.contains(player.getItemInHand().getType(), !plugin.fileManager.debug)) {
             plugin.operations.makeSale(player, player.getItemInHand().getType().toString(), player.getItemInHand().getAmount());
         } else {
             plugin.messageUtils.send(player, plugin.respond.itemInvalid());

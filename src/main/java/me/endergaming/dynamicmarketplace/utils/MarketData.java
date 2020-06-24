@@ -42,7 +42,7 @@ public class MarketData {
         }
 
         public double getBuyPrice(double purchaseAmount) {
-            return purchaseAmount * this.basePrice * getTax();
+            return round(purchaseAmount * this.basePrice * getTax(), 2);
         }
 
         public double getBuyPrice() {
@@ -54,7 +54,7 @@ public class MarketData {
         }
 
         public double getSellPrice(int purchaseAmount) {
-            return purchaseAmount * this.basePrice * 1/getTax();
+            return round(purchaseAmount * this.basePrice * 1/getTax(), 2);
         }
 
         public double getSellPrice() {
@@ -162,6 +162,21 @@ public class MarketData {
         }
         final Material resolved = Material.matchMaterial(material);
         return getItem(resolved, silent);
+    }
+
+    /**
+     * Use this to retrieve an item from storage
+     *
+     * @param material org.bukkit.Material
+     * @return MarketItem - Used to access item's market information
+     */
+    public MarketItem getItem(Material material) {
+        if (contains(material)) {
+            return getItem(material, false);
+        } else {
+            plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eTried to obtain Item data that was not in market storage &3(" + material.getKey().getKey() + ")");
+            return new MarketItem(Material.AIR, "", 0);
+        }
     }
 
     /**
