@@ -113,7 +113,7 @@ public class MarketData {
      * @param places places to round input to (#.00)
      * @return double - QuantityScalar found in config.yml /papi parse me %market_buy_rabbit_foot,1%
      */
-    private static double round(double value, int places) {
+    public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);

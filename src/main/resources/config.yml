@@ -11,6 +11,7 @@ MySQL:
     Database: "minecraft"
     Username: "root"
     Password: "password"
+    useSSL: false
 
 # ----------------------------------------------------------------
 # Price Scaling - Tax, Scalar, and Multiplier settings.

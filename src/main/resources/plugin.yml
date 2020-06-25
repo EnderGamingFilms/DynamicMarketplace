@@ -18,6 +18,8 @@ permissions:
     default: op
   market.command.collector:
     default: op
+  market.command.standing:
+    default: op
   market.command.info:
     default: op
   market.command.worth:
@@ -30,6 +32,7 @@ permissions:
       market.command.sellall: true
       market.command.sellhand: true
       market.command.collector: true
+      market.command.standing: true
       market.command.info: true
       market.command.worth: true
   market.*:

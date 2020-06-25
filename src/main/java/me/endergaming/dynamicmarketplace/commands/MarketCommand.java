@@ -22,16 +22,15 @@ public class MarketCommand extends BaseCommand {
             if (args.length >= 1) {
                 if (args[0].equalsIgnoreCase("collector")) {
                     // Collector Command
-                    if (args.length == 2) {
-                        plugin.cmdManager.collectorCmd.runFromConsole(sender, args); // For console-only
-                    } else {
-                        plugin.messageUtils.send(sender, plugin.respond.getHelp(label));
-                    }
-                } else {
-                    plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
+                    plugin.cmdManager.collectorCmd.runFromConsole(sender, args); // For console-only
+                    return true;
+                } else if (args[0].equalsIgnoreCase("standing")) {
+                    plugin.cmdManager.standingCmd.runFromConsole(sender, args);
+                    return true;
                 }
+                plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
+                return false;
             }
-            return true;
         }
 
         // Player run commands
@@ -61,36 +60,49 @@ public class MarketCommand extends BaseCommand {
         } else if (args[0].equalsIgnoreCase("test")) { // |------------- CURRENT TEST COMMAND -------------|
             if (!player.hasPermission("market.*")) return false;
             // Stuff Here
-            if (args.length > 2) {
-                plugin.marketData.getItem(args[1]).setAmount(Double.parseDouble(args[2]));
-                player.sendMessage(plugin.messageUtils.colorize("&7Set amount of &3" + plugin.marketData.getItem(args[1]).getFriendly() + "&7 to&3 " + args[2]));
-            } else {
-                if (args.length > 1) {
-                    if (args[1].equalsIgnoreCase("reload")) {
-                        plugin.fileManager.calcItemData();
-                        plugin.marketData.getDataMap().forEach((k, v) -> System.out.println("TEST | All Prices (" +
-                                v.getMaterial() + "): " + v.getBuyPrice()));
-                    } else if (args[1].equalsIgnoreCase("amount")) {
-                        player.sendMessage(plugin.messageUtils.colorize("&eAmount in Market: &6" +
-                                plugin.marketData.getItem(player.getItemInHand().getType().toString()).getAmount()));
-                    } else if (args[1].equalsIgnoreCase("load")) {
-                        plugin.fileManager.readMaterialData();
-                    } else if (args[1].equalsIgnoreCase("missing")) {
-                        plugin.fileManager.outputMissingMats();
-                    } else if (args[1].equalsIgnoreCase("help")) {
-                        plugin.messageUtils.send(player, plugin.respond.getHelp(player));
-                    } else if (args[1].equalsIgnoreCase("sellall")) {
-                        plugin.operations.makeSale(player, player.getInventory(), plugin.operations.COLLECTOR);
-                    } else if (args[1].equalsIgnoreCase("remove")) {
-                        plugin.operations.removeFromInventory(player.getInventory(), player.getInventory().getContents(), Material.APPLE, 16);
-                    } else if (args[1].equalsIgnoreCase("update")) {
-                        plugin.fileManager.calcItemData();
-                        player.sendMessage(plugin.messageUtils.colorize("&eUpdated Price: &a") +
-                                plugin.marketData.getItem(player.getItemInHand().getType().toString())
-                                        .getSellPrice());
-                        plugin.fileManager.saveMaterialData();
-                        player.sendMessage(plugin.messageUtils.colorize("&7(&c!&7) &dMarket data saved."));
+            if (args.length > 1) {
+                if (args[1].equalsIgnoreCase("reload")) {
+                    plugin.fileManager.calcItemData();
+                    plugin.marketData.getDataMap().forEach((k, v) -> System.out.println("TEST | All Prices (" +
+                            v.getMaterial() + "): " + v.getBuyPrice()));
+                } else if (args[1].equalsIgnoreCase("amount")) {
+                    player.sendMessage(plugin.messageUtils.colorize("&eAmount in Market: &6" +
+                            plugin.marketData.getItem(player.getItemInHand().getType().toString()).getAmount()));
+                } else if (args[1].equalsIgnoreCase("load")) {
+                    plugin.fileManager.readMaterialData();
+                } else if (args[1].equalsIgnoreCase("missing")) {
+                    plugin.fileManager.outputMissingMats();
+                } else if (args[1].equalsIgnoreCase("help")) {
+                    plugin.messageUtils.send(player, plugin.respond.getHelp(player));
+                } else if (args[1].equalsIgnoreCase("sellall")) {
+                    plugin.operations.makeSale(player, player.getInventory(), plugin.operations.COLLECTOR);
+                } else if (args[1].equalsIgnoreCase("remove")) {
+                    plugin.operations.removeFromInventory(player.getInventory(), player.getInventory().getContents(), Material.APPLE, 16);
+                } else if (args[1].equalsIgnoreCase("update")) {
+                    plugin.fileManager.calcItemData();
+                    player.sendMessage(plugin.messageUtils.colorize("&eUpdated Price: &a") +
+                            plugin.marketData.getItem(player.getItemInHand().getType().toString()).getSellPrice());
+                    plugin.fileManager.saveMaterialData();
+                    player.sendMessage(plugin.messageUtils.colorize("&7(&c!&7) &dMarket data saved."));
+                } else if (args[1].equalsIgnoreCase("standAdd")) {
+                    if (args.length > 2) {
+                        int addSanding = Integer.parseInt(args[2]);
+                        System.out.println("Int: " + addSanding);
+                        plugin.standing.addStanding(player.getUniqueId(), addSanding);
                     }
+                    plugin.messageUtils.send(player, plugin.messageUtils.colorize("&aNew Standing: &f" +
+                            plugin.standing.getStanding(player.getUniqueId())));
+                } else if (args[1].equalsIgnoreCase("standSet")) {
+                    if (args.length > 2) {
+                        int newSanding = Integer.parseInt(args[2]);
+                        System.out.println("Int: " + newSanding);
+                        plugin.standing.setStanding(player.getUniqueId(), Integer.parseInt(args[2]));
+                    }
+                    plugin.messageUtils.send(player, plugin.messageUtils.colorize("&aNew Standing: &f" +
+                            plugin.standing.getStanding(player.getUniqueId())));
+                } else if (args[1].equalsIgnoreCase("standGet")) {
+                    plugin.messageUtils.send(player, plugin.messageUtils.colorize("&7Current Standing: &3" +
+                            plugin.standing.getStanding(player.getUniqueId())));
                 } else {
                     player.sendMessage(plugin.messageUtils.colorize("&cNothing happened..."));
                     return false;
@@ -106,6 +118,8 @@ public class MarketCommand extends BaseCommand {
             plugin.cmdManager.sellAllCmd.run(player, args);
         } else if (args[0].toLowerCase().matches("iteminfo|info|item")) {
             plugin.cmdManager.itemInfoCmd.run(player, args, args[0]);
+        } else if (args[0].equalsIgnoreCase("standing")) {
+            plugin.cmdManager.standingCmd.runFromPlayer(player, args, args[0]);
         } else {
             plugin.messageUtils.send(player, plugin.respond.getHelp(player));
             return false;

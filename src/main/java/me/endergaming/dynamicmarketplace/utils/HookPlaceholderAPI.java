@@ -87,6 +87,8 @@ public class HookPlaceholderAPI extends PlaceholderExpansion {
                 return plugin.economy.format(item.getBuyPrice());
             }
             return "$0.00";
+        } else if (params.equalsIgnoreCase("standing")) {
+            return String.valueOf(plugin.standing.getStanding(player.getUniqueId()));
         }
         // Return null if nothing else
         return null;

@@ -24,7 +24,7 @@ public class MessageUtils {
 
     /**
      * @param path String
-     * @param type BOOLEAN, INT, DOUBLE
+     * @param type BOOLEAN, INT, DOUBLE, STRING[], STRING
      */
     public boolean grabConfig(final String path, boolean type) {
         return plugin.fileManager.getConfig().getBoolean(path);
@@ -32,16 +32,15 @@ public class MessageUtils {
 
     /**
      * @param path String
-     * @param type BOOLEAN, INT, DOUBLE
+     * @param type BOOLEAN, INT, DOUBLE, STRING[], STRING
      */
     public int grabConfig(final String path, int type) {
         return plugin.fileManager.getConfig().getInt(path);
     }
 
     /**
-     * @param path String
-     * @param type BOOLEAN, INT, DOUBLE
-     * @return
+     * @param path String[]
+     * @param type BOOLEAN, INT, DOUBLE, STRING[], STRING
      */
     public List<?> grabConfig(final String path, String[] type) {
         return plugin.fileManager.getConfig().getList(path);
@@ -49,7 +48,15 @@ public class MessageUtils {
 
     /**
      * @param path String
-     * @param type BOOLEAN, INT, DOUBLE
+     * @param type BOOLEAN, INT, DOUBLE, STRING[], STRING
+     */
+    public String grabConfig(final String path, String type) {
+        return plugin.fileManager.getConfig().getString(path);
+    }
+
+    /**
+     * @param path String
+     * @param type BOOLEAN, INT, DOUBLE, STRING[], STRING
      */
     public double grabConfig(final String path, double type) {
         return plugin.fileManager.getConfig().getDouble(path);
@@ -75,7 +82,7 @@ public class MessageUtils {
         return format(grabRaw(path), hasPrefix);
     }
 
-    public String getFormattedMessage(final String path, final int tax, final boolean hasPrefix) {
+    public String getFormattedMessage(final String path, final double tax, final boolean hasPrefix) {
         return format(replace(grabRaw(path), tax), hasPrefix);
     }
 
@@ -136,6 +143,12 @@ public class MessageUtils {
         return msg;
     }
 
+    public String replace(String msg, final double value) {
+        msg = msg.replace("%cost%", String.valueOf(value));
+        msg = msg.replace("%tax%", String.valueOf(value));
+        return msg;
+    }
+
     public String replace(String msg, final String name, final boolean hasPrefix) {
         msg = msg.replace("%collector_name%", name);
         return msg;
@@ -146,13 +159,13 @@ public class MessageUtils {
         return msg;
     }
 
-    public int checkAmount(String amount, Player p) {
+    public int checkAmount(String amount, Player player) {
         if (amount.matches("[0-9]+")) {
             int number = Integer.parseInt(amount);
             if ( number < 1000 )
                 return  number;
         }
-        p.sendMessage(plugin.respond.invalidInput());
+        send(player, plugin.respond.invalidInput());
         return 1;
     }
 

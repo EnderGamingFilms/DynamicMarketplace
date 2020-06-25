@@ -31,14 +31,14 @@ public class SellAllCommand extends BaseCommand {
                 itemToSell = player.getItemInHand().getType();
                 plugin.operations.makeSale(player, player.getInventory(), plugin.operations.COMMAND);
             } else {
-                plugin.messageUtils.send(player, plugin.respond.itemInvalid());
+                plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(player.getItemInHand().getType().getKey().getKey())));
             }
         } else {
             if (plugin.marketData.contains(args[0], !plugin.fileManager.debug)) {
                 itemToSell = Material.matchMaterial(args[0]);
                 plugin.operations.makeSale(player, player.getInventory(), plugin.operations.COMMAND);
             } else {
-                plugin.messageUtils.send(player, plugin.respond.itemInvalid());
+                plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(args[0])));
             }
         }
     }

@@ -35,7 +35,7 @@ public class BuyCommand extends BaseCommand {
             if (amount > 64) amount = 64; // Limit purchases to 1 stack
             plugin.operations.makePurchase(player, str[0], amount);
         } else {
-            plugin.messageUtils.send(player, plugin.respond.itemInvalid());
+            plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(str[0])));
         }
     }
 

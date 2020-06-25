@@ -45,7 +45,7 @@ public class InventoryListener implements Listener {
                     event.setCancelled(true);
                     instance.collectorGUI.clicked((Player) event.getWhoClicked(), event.getSlot(), event.getCurrentItem(), event.getInventory());
                 } else { // Handlers for player inventory clicks
-                    if (!instance.operations.itemChecks(event.getCurrentItem())) { // If item passes all the checks continue
+                    if (!instance.operations.itemChecks((Player) event.getWhoClicked(), event.getCurrentItem())) { // If item passes all the checks continue
                         event.setCancelled(true);
                     }
                 }

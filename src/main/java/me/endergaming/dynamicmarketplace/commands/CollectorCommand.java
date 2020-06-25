@@ -14,11 +14,15 @@ public class CollectorCommand {
     }
 
     public void runFromConsole(CommandSender sender, String[] args) { // When the command is run from console
-        Player playerNew = Bukkit.getPlayerExact(args[1]);
-        if (playerNew != null && playerNew.isValid()) {
-            playerNew.openInventory(plugin.collectorGUI.GUI(playerNew));
+        if (args.length >= 2) {
+            Player playerNew = Bukkit.getPlayerExact(args[1]);
+            if (playerNew != null && playerNew.isValid()) {
+                playerNew.openInventory(plugin.collectorGUI.GUI(playerNew));
+            } else {
+                plugin.messageUtils.send(sender, plugin.respond.collectorInvalidPlayer());
+            }
         } else {
-            plugin.messageUtils.send(sender, plugin.respond.collectorInvalidPlayer());
+            plugin.messageUtils.send(sender, plugin.respond.getHelp(args[0]));
         }
     }
 

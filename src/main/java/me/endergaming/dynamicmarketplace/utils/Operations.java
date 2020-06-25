@@ -155,10 +155,18 @@ public class Operations {
                 }
             }
             plugin.fileManager.calcItemData();
-            // Deposit Profits & Send Messages
-            double profits = plugin.fileManager.collectorDefTax;
-            plugin.messageUtils.send(player, plugin.respond.collectorSuccess((int) profits, getFormatPrice(totalPrice), getFormatPrice(totalPrice * (profits / 100))));
-            plugin.economy.depositPlayer(player, totalPrice * (profits / 100));
+            // Profits calculations
+            double profits;
+            if (plugin.fileManager.collectorHasStanding) { // Check if "The Collector" standing system is enabled
+                profits = (plugin.standing.getStanding(player.getUniqueId()) / 100.0) + plugin.fileManager.collectorDefTax;
+            } else {
+                profits = plugin.fileManager.collectorDefTax;
+            }
+            // Economy Actions
+            profits = MarketData.round(profits, 2);
+            plugin.messageUtils.send(player, plugin.respond.collectorSuccess(profits, getFormatPrice(totalPrice), getFormatPrice(totalPrice * (profits / 100))));
+            totalPrice = MarketData.round(totalPrice * (profits / 100), 2);
+            plugin.economy.depositPlayer(player, totalPrice);
         } else if (actionSet.equals(COMMAND)) {
             double totalPrice = 0.0;
             int found = 0;
@@ -260,23 +268,53 @@ public class Operations {
         if (item.getAmount() < 1) {
             return false;
         }
-            // Check if an item has a custom name - Case 2
-        else if (item.getItemMeta().hasDisplayName()) {
+        // Check if an item has a custom name/lore - Case 2
+        else if (item.getItemMeta().hasDisplayName() || item.getItemMeta().hasLore()) {
             return false;
         }
-            // Check if an item has enchants - Case 3
+        // Check if an item has enchants - Case 3
         else if (!item.getEnchantments().isEmpty()) {
             return false;
         }
-            // Check if an item is damaged - Case 4
+        // Check if an item is damaged - Case 4
         else if (((Damageable) item.getItemMeta()).getDamage() != 0) {
             return false;
         }
-            // Check if an item is valid - Case 5
-        else if (!plugin.marketData.contains(item.getType())) {
+        // Check if an item is valid - Case 5
+        else if (!plugin.marketData.contains(item.getType(), !plugin.fileManager.debug)) {
             return false;
         }
-            // If all checks were passed successfully - Case 6
+        // If all checks were passed successfully - Case 6
+        else return true;
+    }
+
+    public boolean itemChecks(Player player, ItemStack item) {
+        // Check if player is holding an item - Case 1
+        if (item.getAmount() < 1) {
+            plugin.messageUtils.send(player, plugin.respond.holdingNothing());
+            return false;
+        }
+        // Check if an item has a custom name/lore - Case 2
+        else if (item.getItemMeta().hasDisplayName() || item.getItemMeta().hasLore()) {
+            plugin.messageUtils.send(player, plugin.respond.itemIsCustom());
+            return false;
+        }
+        // Check if an item has enchants - Case 3
+        else if (!item.getEnchantments().isEmpty()) {
+            plugin.messageUtils.send(player, plugin.respond.itemIsEnchanted());
+            return false;
+        }
+        // Check if an item is damaged - Case 4
+        else if (((Damageable) item.getItemMeta()).getDamage() != 0) {
+            plugin.messageUtils.send(player, plugin.respond.itemIsDamaged());
+            return false;
+        }
+        // Check if an item is valid - Case 5
+        else if (!plugin.marketData.contains(item.getType(), !plugin.fileManager.debug)) {
+            plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(item.getType().getKey().getKey())));
+            return false;
+        }
+        // If all checks were passed successfully - Case 6
         else return true;
     }
 

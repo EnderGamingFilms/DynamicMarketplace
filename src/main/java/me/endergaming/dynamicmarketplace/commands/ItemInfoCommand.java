@@ -37,13 +37,13 @@ public class ItemInfoCommand extends BaseCommand {
             if (plugin.marketData.contains(args[0], !plugin.fileManager.debug)) {
                 plugin.messageUtils.send(player, plugin.respond.itemInfo(args[0]));
             } else {
-                plugin.messageUtils.send(player, plugin.respond.itemInvalid());
+                plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(args[0])));
             }
         } else {
             if (plugin.marketData.contains(player.getItemInHand().getType(), !plugin.fileManager.debug)) {
                 plugin.messageUtils.send(player, plugin.respond.itemInfo(player.getItemInHand().getType().getKey().getKey()));
             } else {
-                plugin.messageUtils.send(player, plugin.respond.itemInvalid());
+                plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(player.getItemInHand().getType().getKey().getKey())));
             }
         }
     }

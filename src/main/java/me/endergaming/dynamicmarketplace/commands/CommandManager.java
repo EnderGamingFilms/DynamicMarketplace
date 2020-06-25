@@ -18,6 +18,7 @@ public class CommandManager {
     public WorthCommand worthCmd;
     public ReloadCommand reloadCmd;
     public CollectorCommand collectorCmd;
+    public StandingCommand standingCmd;
 
     public CommandManager(@NotNull final DynamicMarketplace instance) {
         this.plugin = instance;
@@ -36,6 +37,7 @@ public class CommandManager {
         // Register Sub-Commands "/market command"
         reloadCmd = new ReloadCommand(plugin);
         collectorCmd = new CollectorCommand(plugin);
+        standingCmd = new StandingCommand(plugin);
 
         // Register BaseCommands "/command"
         for (BaseCommand command : commandList) {

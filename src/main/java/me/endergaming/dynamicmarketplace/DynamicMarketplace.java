@@ -1,15 +1,25 @@
 package me.endergaming.dynamicmarketplace;
 
+import me.endergaming.dynamicmarketplace.Database.MySQL;
+import me.endergaming.dynamicmarketplace.Database.SQLGetter;
 import me.endergaming.dynamicmarketplace.commands.*;
 import me.endergaming.dynamicmarketplace.gui.CollectorGUI;
 import me.endergaming.dynamicmarketplace.gui.InventoryListener;
 import me.endergaming.dynamicmarketplace.utils.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class DynamicMarketplace extends JavaPlugin {
+import java.sql.SQLException;
+
+public final class DynamicMarketplace extends JavaPlugin implements Listener {
     public final CommandManager cmdManager = new CommandManager(this);
     public final FileManager fileManager = new FileManager(this);
     public final MessageUtils messageUtils = new MessageUtils(this);
@@ -17,6 +27,8 @@ public final class DynamicMarketplace extends JavaPlugin {
     public final MarketData marketData = new MarketData(this);
     public final Calculations calculations = new Calculations(this);
     public final Operations operations = new Operations(this);
+    public final MySQL database = new MySQL(this);
+    public final SQLGetter standing = new SQLGetter(this);
     //    public final GuiManager guiManager = new GuiManager(this);
     public final CollectorGUI collectorGUI = new CollectorGUI(this);
     public Economy economy;
@@ -48,12 +60,17 @@ public final class DynamicMarketplace extends JavaPlugin {
         // Register Listeners
         new InventoryListener(this);
         collectorGUI.initialize();
+
+        // MySQL
+        setupSQL();
     }
 
     @Override
     public void onDisable() {
+        HandlerList.unregisterAll((Plugin) this);
         fileManager.saveMaterialData();
         messageUtils.log(MessageUtils.LogLevel.INFO, "&aSaved all material amount to file.");
+        database.disconnect();
         super.onDisable();
     }
 
@@ -63,6 +80,27 @@ public final class DynamicMarketplace extends JavaPlugin {
 
     public void loadFiles() {
         fileManager.setup();
+    }
+
+    private void setupSQL() {
+        database.init();
+        if (database.isEnabled()) {
+            try {
+                database.connect();
+            } catch (ClassNotFoundException | SQLException e) {
+                messageUtils.log(MessageUtils.LogLevel.INFO, "&cDatabase failed to connect.");
+                e.printStackTrace();
+            }
+
+            if (database.isConnected()) {
+                messageUtils.log(MessageUtils.LogLevel.INFO, "&aDatabase successfully connected.");
+                standing.createTable();
+                // Register Listeners in Main Class (PlayerJoinEvent)
+                this.getServer().getPluginManager().registerEvents(this, this);
+            }
+        } else {
+            messageUtils.log(MessageUtils.LogLevel.INFO, "&cDatabase not enabled.");
+        }
     }
 
     private boolean setupEconomy() {
@@ -75,5 +113,11 @@ public final class DynamicMarketplace extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
         return (economy != null);
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        standing.createPlayer(player);
     }
 }

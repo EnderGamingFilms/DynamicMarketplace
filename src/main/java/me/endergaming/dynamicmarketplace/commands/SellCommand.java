@@ -35,7 +35,7 @@ public class SellCommand extends BaseCommand {
             if (amount > 128) amount = 128; // Limit purchases to 2 stack
             plugin.operations.makeSale(player, str[0], amount);
         } else {
-            plugin.messageUtils.send(player, plugin.respond.itemInvalid());
+            plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(str[0])));
         }
     }
 

@@ -7,13 +7,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.soap.Text;
+import java.util.UUID;
+
+import static me.endergaming.dynamicmarketplace.utils.MessageUtils.NL;
 
 public class Responses {
-    public static final boolean BOOLEAN = false;
-    public static final int INT = 0;
-    public static final double DOUBLE = 0.0;
-    public static final String[] LIST = new String[0];
     private final DynamicMarketplace plugin;
 
     public Responses(@NotNull final DynamicMarketplace instance) {
@@ -34,8 +32,8 @@ public class Responses {
         return plugin.messageUtils.getFormattedMessage("non-player");
     }
 
-    public String itemIsNamed() {
-        return plugin.messageUtils.getFormattedMessage("item-errors.named");
+    public String itemIsCustom() {
+        return plugin.messageUtils.getFormattedMessage("item-errors.custom");
     }
 
     public String itemIsEnchanted() {
@@ -46,8 +44,8 @@ public class Responses {
         return plugin.messageUtils.getFormattedMessage("item-errors.damaged");
     }
 
-    public String itemInvalid() {
-        return plugin.messageUtils.getFormattedMessage("item-errors.invalid");
+    public String itemInvalid(String item) {
+        return plugin.messageUtils.getFormattedMessage("item-errors.invalid", item, 0);
     }
 
     public String holdingNothing() {
@@ -71,20 +69,20 @@ public class Responses {
 
     public TextComponent itemInfo(String item) {
         TextComponent message = new TextComponent();
-        message.addExtra(plugin.messageUtils.colorize("&e---------- &6Market &e----------" + MessageUtils.NL));
-        message.addExtra(plugin.messageUtils.colorize("&fItem: &b" + plugin.marketData.getItem(item).getFriendly() + MessageUtils.NL));
+        message.addExtra(plugin.messageUtils.colorize("&e---------- &6Market &e----------" + NL));
+        message.addExtra(plugin.messageUtils.colorize("&fItem: &b" + plugin.marketData.getItem(item).getFriendly() + NL));
         if (plugin.marketData.getItem(item).hasRecipe()) {
-            message.addExtra(plugin.messageUtils.colorize("&f*This is a crafted item." + MessageUtils.NL));
+            message.addExtra(plugin.messageUtils.colorize("&f*This is a crafted item." + NL));
         } else {
             message.addExtra(plugin.messageUtils.colorize("&fQuantity: &b~" +
-                    plugin.marketData.getItem(item).getAmount()) + MessageUtils.NL);
+                    plugin.marketData.getItem(item).getAmount()) + NL);
         }
         message.addExtra(plugin.messageUtils.colorize("&fBuy  : &a" +
                 plugin.economy.format(plugin.marketData.getItem(item).getBuyPrice(1)) + "&f each, &a" +
-                plugin.economy.format(plugin.marketData.getItem(item).getBuyPrice(64)) + "&f for 64" + MessageUtils.NL));
+                plugin.economy.format(plugin.marketData.getItem(item).getBuyPrice(64)) + "&f for 64" + NL));
         message.addExtra(plugin.messageUtils.colorize("&fSell  : &a" +
                 plugin.economy.format(plugin.marketData.getItem(item).getSellPrice(1)) + "&f each, &a" +
-                plugin.economy.format(plugin.marketData.getItem(item).getSellPrice(64)) + "&f for 64" + MessageUtils.NL));
+                plugin.economy.format(plugin.marketData.getItem(item).getSellPrice(64)) + "&f for 64" + NL));
         message.addExtra(plugin.messageUtils.colorize("&e---------------------------"));
 
         return message;
@@ -121,13 +119,13 @@ public class Responses {
     //------------------------------------------
 
     /** |-------------- The Collector Responses --------------| */
-    public TextComponent collectorSuccess(final int profits, String total, String adjusted) {
+    public TextComponent collectorSuccess(final double profits, String total, String adjusted) {
         TextComponent message = new TextComponent(plugin.messageUtils
                 .getFormattedMessage("collector.success", "collector.name", true)
                 + MessageUtils.SPACE + collectorTax(profits));
 
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(plugin.messageUtils
-                .colorize(collectorTotal(total) + MessageUtils.NL + collectorAdjTotal(adjusted))).create()));
+                .colorize(collectorTotal(total) + NL + collectorAdjTotal(adjusted))).create()));
 
         return message;
     }
@@ -148,8 +146,16 @@ public class Responses {
         return  plugin.messageUtils.getFormattedMessage("collector.adjusted", adjusted, false, true);
     }
 
-    public String collectorTax(final int tax) {
+    public String collectorTax(final double tax) {
         return plugin.messageUtils.getFormattedMessage("collector.profit", tax, false);
+    }
+
+    public TextComponent standingModified(int modifiedBy, UUID uuid) {
+        TextComponent message = new TextComponent();
+        message.addExtra(plugin.messageUtils.format("&aSuccessfully modified player standing!"));
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(plugin.messageUtils.colorize("&eModified By: &f" +
+                modifiedBy + NL + "&eNew Standing: &f" + plugin.standing.getStanding(uuid))).create()));
+        return message;
     }
     //------------------------------------------
 
@@ -160,23 +166,25 @@ public class Responses {
 
     public TextComponent getHelp(Player player) {
         TextComponent message = new TextComponent();
-        message.addExtra(plugin.messageUtils.getFormattedMessage("help.header", false) + MessageUtils.NL);
+        message.addExtra(plugin.messageUtils.getFormattedMessage("help.header", false) + NL);
         if (player.hasPermission("market.reload"))
-            message.addExtra(getHelp("reload") + MessageUtils.NL);
+            message.addExtra(getHelp("reload") + NL);
         if (player.hasPermission("market.command.collector"))
-            message.addExtra(getHelp("collector") + MessageUtils.NL);
+            message.addExtra(getHelp("collector") + NL);
+        if (player.hasPermission("market.command.standing"))
+            message.addExtra(getHelp("standing") + NL);
         if (player.hasPermission("market.command.buy"))
-            message.addExtra(getHelp("buy") + MessageUtils.NL);
+            message.addExtra(getHelp("buy") + NL);
         if (player.hasPermission("market.command.sell"))
-            message.addExtra(getHelp("sell") + MessageUtils.NL);
+            message.addExtra(getHelp("sell") + NL);
         if (player.hasPermission("market.command.sellall"))
-            message.addExtra(getHelp("sellall") + MessageUtils.NL);
+            message.addExtra(getHelp("sellall") + NL);
         if (player.hasPermission("market.command.info"))
-            message.addExtra(getHelp("iteminfo") + MessageUtils.NL);
+            message.addExtra(getHelp("iteminfo") + NL);
         if (player.hasPermission("market.command.worth"))
-            message.addExtra(getHelp("worth") + MessageUtils.NL);
+            message.addExtra(getHelp("worth") + NL);
         if (player.hasPermission("market.command.sellhand"))
-            message.addExtra(getHelp("sellhand") + MessageUtils.NL);
+            message.addExtra(getHelp("sellhand") + NL);
         message.addExtra(plugin.messageUtils.colorize("       &7Author: " + plugin.getDescription().getAuthors().get(0) +
                 "&7       |       Version: " + plugin.getDescription().getVersion()));
         return message;

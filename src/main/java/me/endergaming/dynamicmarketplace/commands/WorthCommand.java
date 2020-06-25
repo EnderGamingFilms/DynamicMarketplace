@@ -24,7 +24,7 @@ public class WorthCommand extends BaseCommand {
         if (plugin.marketData.contains(player.getItemInHand().getType(), !plugin.fileManager.debug)) {
             plugin.operations.getWorth(player, player.getItemInHand());
         } else {
-            plugin.messageUtils.send(player, plugin.respond.itemInvalid());
+            plugin.messageUtils.send(player, plugin.respond.itemInvalid(player.getItemInHand().getType().getKey().getKey()));
         }
     }
 

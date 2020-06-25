@@ -14,6 +14,11 @@ import java.util.*;
 import static me.endergaming.dynamicmarketplace.utils.Responses.*;
 
 public class FileManager {
+    public static final boolean BOOLEAN = false;
+    public static final int INT = 0;
+    public static final double DOUBLE = 0.0;
+    public static final String STRING = "";
+    public static final String[] LIST = new String[0];
     private final DynamicMarketplace plugin;
     public DecimalFormat df = new DecimalFormat("#.00");
 
