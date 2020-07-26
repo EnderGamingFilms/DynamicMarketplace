@@ -1,7 +1,7 @@
 package me.endergaming.dynamicmarketplace;
 
-import me.endergaming.dynamicmarketplace.Database.MySQL;
-import me.endergaming.dynamicmarketplace.Database.SQLGetter;
+import me.endergaming.dynamicmarketplace.database.MySQL;
+import me.endergaming.dynamicmarketplace.database.SQLGetter;
 import me.endergaming.dynamicmarketplace.commands.*;
 import me.endergaming.dynamicmarketplace.gui.CollectorGUI;
 import me.endergaming.dynamicmarketplace.gui.InventoryListener;
@@ -41,7 +41,8 @@ public final class DynamicMarketplace extends JavaPlugin implements Listener {
 
         // Setup Economy
         messageUtils.log(MessageUtils.LogLevel.INFO, "&9Loading vault economy.");
-        setupEconomy();
+        if (!setupEconomy())
+            return; // There was an error enabling the economy hooks
 
         // Register commands
         messageUtils.log(MessageUtils.LogLevel.INFO, "&9Loading plugin commands.");
@@ -58,8 +59,10 @@ public final class DynamicMarketplace extends JavaPlugin implements Listener {
         }
 
         // Register Listeners
-        new InventoryListener(this);
-        collectorGUI.initialize();
+        if (fileManager.collectorIsEnabled) {
+            new InventoryListener(this);
+            collectorGUI.initialize();
+        }
 
         // MySQL
         setupSQL();

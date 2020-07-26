@@ -30,7 +30,7 @@ public class Operations {
         if (balance < marketItem.getBuyPrice(amount)) {
             // The player has insufficient funds
             plugin.messageUtils.send(player, plugin.respond.buyFailedCost(getFormatPrice(marketItem.getBuyPrice(amount)), String.valueOf(balance)));
-        } else if (marketItem.getAmount() != -1 && marketItem.getAmount() < amount) {
+        } else if ((!marketItem.hasRecipe()) && (marketItem.getAmount() != 1) && (marketItem.getAmount() < amount)) {
             // There are not enough items in the market to sell to the player
             plugin.messageUtils.send(player, plugin.respond.buyFailedAmount(marketItem.getFriendly(), amount));
         } else {

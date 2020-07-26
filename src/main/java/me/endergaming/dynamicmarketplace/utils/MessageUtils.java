@@ -204,7 +204,7 @@ public class MessageUtils {
      * @param msg    the message string
      * @return the colorized string of the prefix and msg joined together
      */
-    public String prefix(final String msg) {
+    private String prefix(final String msg) {
         return colorize(prefix + msg);
     }
 

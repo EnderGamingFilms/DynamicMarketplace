@@ -1,4 +1,4 @@
-package me.endergaming.dynamicmarketplace.Database;
+package me.endergaming.dynamicmarketplace.database;
 
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import me.endergaming.dynamicmarketplace.utils.MessageUtils;
