@@ -4,6 +4,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.entity.Player;
 
+import static me.endergaming.dynamicmarketplace.Database.SQLGetter.defaultStanding;
+
 public class HookPlaceholderAPI extends PlaceholderExpansion {
     private final DynamicMarketplace plugin;
 
@@ -83,12 +85,15 @@ public class HookPlaceholderAPI extends PlaceholderExpansion {
         } else if (params.equalsIgnoreCase("hand")) {
             if (plugin.marketData.contains(player.getItemInHand().getType().getKey().getKey(), true)) {
                 item = plugin.marketData.getItem(player.getItemInHand().getType(), true);
-//                double price = (item.getSellPrice(player.getItemInHand().getAmount())); // Change back to sell
-                return plugin.economy.format(item.getBuyPrice());
+                return plugin.economy.format(item.getBuyPrice(player.getItemInHand().getAmount()));
             }
             return "$0.00";
         } else if (params.equalsIgnoreCase("standing")) {
-            return String.valueOf(plugin.standing.getStanding(player.getUniqueId()));
+            if (plugin.fileManager.collectorHasStanding) {
+                return String.valueOf(plugin.standing.getStanding(player.getUniqueId()));
+            } else {
+                return String.valueOf(defaultStanding);
+            }
         }
         // Return null if nothing else
         return null;

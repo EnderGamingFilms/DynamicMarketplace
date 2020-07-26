@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static me.endergaming.dynamicmarketplace.utils.FileManager.BOOLEAN;
 import static me.endergaming.dynamicmarketplace.utils.FileManager.STRING;
@@ -16,12 +17,10 @@ public class MySQL {
     private Connection connection;
     private boolean isEnabled;
     // Connection Data
+    private final Properties properties = new Properties();
     private String host;
     private String port;
     private String database;
-    private String username;
-    private String password;
-    private String useSSL;
 
     public MySQL(@NotNull final DynamicMarketplace instance) {
         this.plugin = instance;
@@ -32,9 +31,10 @@ public class MySQL {
         host = plugin.messageUtils.grabConfig("MySQL.Host", STRING);
         port = plugin.messageUtils.grabConfig("MySQL.Port", STRING);
         database = plugin.messageUtils.grabConfig("MySQL.Database", STRING);
-        username = plugin.messageUtils.grabConfig("MySQL.Username", STRING);
-        password = plugin.messageUtils.grabConfig("MySQL.Password", STRING);
-        useSSL = plugin.messageUtils.grabConfig("MySQL.useSSL", STRING);
+        properties.setProperty("user", plugin.messageUtils.grabConfig("MySQL.Username", STRING));
+        properties.setProperty("password", plugin.messageUtils.grabConfig("MySQL.Password", STRING));
+        properties.setProperty("useSSL", plugin.messageUtils.grabConfig("MySQL.useSSL", STRING));
+        properties.setProperty("autoReconnect", "true");
     }
 
     public boolean isEnabled() {
@@ -48,7 +48,7 @@ public class MySQL {
     public void connect() throws ClassNotFoundException, SQLException {
         if (!isConnected()) {
             connection = DriverManager.getConnection("jdbc:mysql://" +
-                    host + ":" + port + "/" + database + "?useSSL=" + useSSL, username, password);
+                    host + ":" + port + "/" + database, properties); // + "?useSSL=" + useSSL, username, password);
         }
     }
 

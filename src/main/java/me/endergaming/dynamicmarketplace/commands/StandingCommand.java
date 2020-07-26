@@ -17,6 +17,12 @@ public class StandingCommand {
     }
 
     public void runFromConsole(CommandSender sender, String[] args) { // When the command is run from console
+        // Check if Standing is enabled
+        if (!plugin.fileManager.collectorHasStanding) {
+            plugin.messageUtils.send(sender, plugin.messageUtils.format("&cPlease enable standing in config.yml to use this command."));
+            return;
+        }
+
         // Remove "standing" from args
         String[] str = args;
         str = String.join(" ", str).replaceFirst("(standing ?)", "").split(" ");
@@ -61,11 +67,16 @@ public class StandingCommand {
     }
 
     public void runFromPlayer(Player player, String[] args, String cmd) {
+        // Check if Standing is enabled
+        if (!plugin.fileManager.collectorHasStanding) {
+            plugin.messageUtils.send(player, plugin.messageUtils.format("&cPlease enable standing in config.yml to use this command."));
+            return;
+        }
+
         if (!player.hasPermission("market.command.standing")) {
             player.sendMessage(plugin.respond.noPerms());
             return;
         }
-
 
         // Remove "standing" from args
         String[] str = args;
@@ -80,7 +91,7 @@ public class StandingCommand {
                     return;
                 }
                 plugin.messageUtils.send(player, plugin.messageUtils.format("&aCurrent Standing&f " +
-                        plugin.standing.getStanding(plugin.getServer().getPlayer(str[1]).getUniqueId()) + " &7(&b" + str[1] + "&7)"));
+                        plugin.standing.getStanding(plugin.getServer().getPlayer(str[1]).getUniqueId()) + " &7(&b" + plugin.getServer().getPlayer(str[1]).getName() + "&7)"));
             } else {
                 plugin.messageUtils.send(player, plugin.respond.getHelp(cmd));
             }

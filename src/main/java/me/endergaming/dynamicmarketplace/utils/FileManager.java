@@ -215,6 +215,7 @@ public class FileManager {
                 fileWriter.write(String.format("%s: %s\n", item.getMaterial().getKey().getKey(), item.getAmount()));
             }
 
+            plugin.messageUtils.log(MessageUtils.LogLevel.INFO, "&aSaved all material amount to file.");
             // Close files
             fileWriter.close();
             br.close();

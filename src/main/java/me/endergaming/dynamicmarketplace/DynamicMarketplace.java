@@ -72,13 +72,8 @@ public final class DynamicMarketplace extends JavaPlugin implements Listener {
     public void onDisable() {
         HandlerList.unregisterAll((Plugin) this);
         fileManager.saveMaterialData();
-        messageUtils.log(MessageUtils.LogLevel.INFO, "&aSaved all material amount to file.");
         database.disconnect();
         super.onDisable();
-    }
-
-    public void registerCommand(BaseCommand command) {
-        command.register();
     }
 
     public void loadFiles() {
