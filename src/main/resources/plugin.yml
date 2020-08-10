@@ -1,7 +1,7 @@
 name: DynamicMarketplace
 author: EnderGamingFilms
 version: ${project.version}
-main: me.endergaming.dynamicmarketplace.DynamicMarketplace
+main: me.endergamingfilms.dynamicmarketplace.DynamicMarketplace
 api-version: 1.13
 depend: [Vault]
 softdepend: [PlaceholderAPI]
