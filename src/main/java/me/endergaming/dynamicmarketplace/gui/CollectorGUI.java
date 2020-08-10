@@ -114,6 +114,16 @@ public class CollectorGUI {
         }
     }
 
+    // Final check
+    public boolean illegalItemFound(Inventory inv) {
+        for (ItemStack item : inv.getContents()) {
+            if (item == null) continue;
+
+            if (!instance.operations.itemChecks(item)) return true;
+        }
+        return false;
+    }
+
     // This is where selling items happens
     public void clicked(Player player, int slot, ItemStack clicked, Inventory inv) {
         String cItem = clicked.getItemMeta().getDisplayName();
@@ -126,10 +136,20 @@ public class CollectorGUI {
                 player.closeInventory();
                 break;
             case GREEN_STAINED_GLASS_PANE: // Accept
-                boolean empty = true; InventoryListener.realClose = true;
+                boolean empty = true;
+
+                InventoryListener.realClose = true;
+
 
                 // Check if the player put anything in the CollectorGUI
                 for (int s : InventoryListener.Allowed) { if (inv.getItem(s) != null) { empty = false; break; } }
+
+                // Check if the user has placed anything that shouldn't be there in the gui
+                if (illegalItemFound(player.getOpenInventory().getTopInventory())) {
+                    InventoryListener.realClose = false;
+                    player.closeInventory();
+                    break;
+                }
 
                 if (!empty) { // There is stuff
                     instance.operations.makeSale(player, inv, instance.operations.COLLECTOR);

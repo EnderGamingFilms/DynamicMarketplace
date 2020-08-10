@@ -2,9 +2,8 @@ package me.endergaming.dynamicmarketplace.utils;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.endergaming.dynamicmarketplace.DynamicMarketplace;
+import me.endergaming.dynamicmarketplace.database.SQLGetter;
 import org.bukkit.entity.Player;
-
-import static me.endergaming.dynamicmarketplace.Database.SQLGetter.defaultStanding;
 
 public class HookPlaceholderAPI extends PlaceholderExpansion {
     private final DynamicMarketplace plugin;
@@ -92,7 +91,7 @@ public class HookPlaceholderAPI extends PlaceholderExpansion {
             if (plugin.fileManager.collectorHasStanding) {
                 return String.valueOf(plugin.standing.getStanding(player.getUniqueId()));
             } else {
-                return String.valueOf(defaultStanding);
+                return String.valueOf(SQLGetter.defaultStanding);
             }
         }
         // Return null if nothing else
