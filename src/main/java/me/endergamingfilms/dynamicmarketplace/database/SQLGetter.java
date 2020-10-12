@@ -1,7 +1,7 @@
-package me.endergaming.dynamicmarketplace.database;
+package me.endergamingfilms.dynamicmarketplace.database;
 
-import me.endergaming.dynamicmarketplace.DynamicMarketplace;
-import me.endergaming.dynamicmarketplace.utils.MessageUtils;
+import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
+import me.endergamingfilms.dynamicmarketplace.utils.MessageUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

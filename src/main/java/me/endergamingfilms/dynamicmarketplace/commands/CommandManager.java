@@ -1,6 +1,6 @@
-package me.endergaming.dynamicmarketplace.commands;
+package me.endergamingfilms.dynamicmarketplace.commands;
 
-import me.endergaming.dynamicmarketplace.DynamicMarketplace;
+import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.List;
 public class CommandManager {
     private final DynamicMarketplace plugin;
     public List<BaseCommand> commandList = new ArrayList<>();
+    public List<String> subCommandList = new ArrayList<>();
     public MarketCommand marketCmd;
     public BuyCommand buyCmd;
     public SellCommand sellCmd;
@@ -38,6 +39,12 @@ public class CommandManager {
         reloadCmd = new ReloadCommand(plugin);
         collectorCmd = new CollectorCommand(plugin);
         standingCmd = new StandingCommand(plugin);
+        // Make command list
+        subCommandList.add("reload");
+        subCommandList.add("load");
+        subCommandList.add("help");
+        subCommandList.add("collector");
+        subCommandList.add("standing");
 
         // Register BaseCommands "/command"
         for (BaseCommand command : commandList) {

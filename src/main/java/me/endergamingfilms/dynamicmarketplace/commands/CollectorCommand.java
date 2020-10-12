@@ -1,12 +1,10 @@
-package me.endergaming.dynamicmarketplace.commands;
+package me.endergamingfilms.dynamicmarketplace.commands;
 
-import me.endergaming.dynamicmarketplace.DynamicMarketplace;
+import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import static me.endergaming.dynamicmarketplace.utils.MessageUtils.LogLevel.INFO;
 
 public class CollectorCommand {
     private final DynamicMarketplace plugin;

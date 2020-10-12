@@ -1,16 +1,14 @@
-package me.endergaming.dynamicmarketplace.database;
+package me.endergamingfilms.dynamicmarketplace.database;
 
-import me.endergaming.dynamicmarketplace.DynamicMarketplace;
-import me.endergaming.dynamicmarketplace.utils.MessageUtils;
+import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
+import me.endergamingfilms.dynamicmarketplace.utils.MessageUtils;
+import me.endergamingfilms.dynamicmarketplace.utils.FileManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
-import static me.endergaming.dynamicmarketplace.utils.FileManager.BOOLEAN;
-import static me.endergaming.dynamicmarketplace.utils.FileManager.STRING;
 
 public class MySQL {
     private final DynamicMarketplace plugin;
@@ -27,13 +25,13 @@ public class MySQL {
     }
 
     public void init() {
-        isEnabled = plugin.messageUtils.grabConfig("MySQL.Enable", BOOLEAN);
-        host = plugin.messageUtils.grabConfig("MySQL.Host", STRING);
-        port = plugin.messageUtils.grabConfig("MySQL.Port", STRING);
-        database = plugin.messageUtils.grabConfig("MySQL.Database", STRING);
-        properties.setProperty("user", plugin.messageUtils.grabConfig("MySQL.Username", STRING));
-        properties.setProperty("password", plugin.messageUtils.grabConfig("MySQL.Password", STRING));
-        properties.setProperty("useSSL", plugin.messageUtils.grabConfig("MySQL.useSSL", STRING));
+        isEnabled = plugin.messageUtils.grabConfig("MySQL.Enable", FileManager.BOOLEAN);
+        host = plugin.messageUtils.grabConfig("MySQL.Host", FileManager.STRING);
+        port = plugin.messageUtils.grabConfig("MySQL.Port", FileManager.STRING);
+        database = plugin.messageUtils.grabConfig("MySQL.Database", FileManager.STRING);
+        properties.setProperty("user", plugin.messageUtils.grabConfig("MySQL.Username", FileManager.STRING));
+        properties.setProperty("password", plugin.messageUtils.grabConfig("MySQL.Password", FileManager.STRING));
+        properties.setProperty("useSSL", plugin.messageUtils.grabConfig("MySQL.useSSL", FileManager.STRING));
         properties.setProperty("autoReconnect", "true");
     }
 
