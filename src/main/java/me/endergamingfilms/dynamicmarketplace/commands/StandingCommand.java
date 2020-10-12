@@ -1,13 +1,13 @@
-package me.endergaming.dynamicmarketplace.commands;
+package me.endergamingfilms.dynamicmarketplace.commands;
 
-import me.endergaming.dynamicmarketplace.DynamicMarketplace;
+import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static me.endergaming.dynamicmarketplace.database.SQLGetter.defaultStanding;
+import static me.endergamingfilms.dynamicmarketplace.database.SQLGetter.defaultStanding;
 
 public class StandingCommand {
     private final DynamicMarketplace plugin;

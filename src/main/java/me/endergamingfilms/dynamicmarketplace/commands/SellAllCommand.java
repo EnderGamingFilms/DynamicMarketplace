@@ -1,6 +1,6 @@
-package me.endergaming.dynamicmarketplace.commands;
+package me.endergamingfilms.dynamicmarketplace.commands;
 
-import me.endergaming.dynamicmarketplace.DynamicMarketplace;
+import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

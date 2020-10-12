@@ -1,4 +1,4 @@
-package me.endergaming.dynamicmarketplace.commands;
+package me.endergamingfilms.dynamicmarketplace.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;

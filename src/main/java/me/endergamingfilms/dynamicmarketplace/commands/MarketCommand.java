@@ -1,11 +1,17 @@
-package me.endergaming.dynamicmarketplace.commands;
+package me.endergamingfilms.dynamicmarketplace.commands;
 
-import me.endergaming.dynamicmarketplace.DynamicMarketplace;
+import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class MarketCommand extends BaseCommand {
     private final DynamicMarketplace plugin;
@@ -127,16 +133,42 @@ public class MarketCommand extends BaseCommand {
         return true;
     }
 
-    /* @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        List<String> completes = null;
-        //TODO command completion
-        //market reload
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+        // Return all sub-commands
         if (args.length == 1) {
-            completes = Arrays.asList("reload", "...");
-            if (args[0].length() > 0)
-                completes.removeIf(s -> !s.startsWith(args[0]));
+            System.out.println("--->args: " + args[0]);
+            return plugin.cmdManager.subCommandList;
         }
-        return completes;
-    } */
+        // Handle level 1 sub-commands
+        if (args.length == 2) {
+            if (args[0].equals("standing")) {
+                return Arrays.asList("add","remove","set");
+            } else if (args[0].equalsIgnoreCase("collector")) {
+                // Generate Online Player List
+                List<String> playerList = new ArrayList<>();
+                for (Player player :  Bukkit.getOnlinePlayers()) {
+                    if (player == null) continue;
+                    playerList.add(player.getDisplayName());
+                }
+//                playerList.add("Mojo_JOJO");
+//                playerList.add("Jeffafa");
+                return playerList;
+            }
+        }
+        // Handle level 2 sub-commands
+        if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("standing")) {
+                // Generate Online Player List
+                List<String> playerList = new ArrayList<>();
+                for (Player player :  Bukkit.getOnlinePlayers()) {
+                    if (player == null) continue;
+                    playerList.add(player.getDisplayName());
+                }
+                return playerList;
+            }
+        }
+        return null;
+    }
 }
