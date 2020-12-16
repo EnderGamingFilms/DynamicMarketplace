@@ -18,7 +18,7 @@ permissions:
     default: op
   market.command.collector:
     default: op
-  market.command.collector.other:
+  market.command.collector.others:
     default: op
   market.command.standing:
     default: op

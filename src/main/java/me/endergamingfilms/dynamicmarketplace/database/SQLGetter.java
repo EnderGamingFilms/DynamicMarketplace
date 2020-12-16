@@ -72,10 +72,14 @@ public class SQLGetter {
 
     public void addStanding(UUID uuid, int standing) {
         try {
-            PreparedStatement pStatement = plugin.database.getConnection().prepareStatement("UPDATE market_standing SET standing=? WHERE uuid=?");
-            pStatement.setInt(1, (getStanding(uuid) + standing));
-            pStatement.setString(2, uuid.toString());
-            pStatement.executeUpdate();
+            if (getStanding(uuid)+standing/100.0+plugin.fileManager.collectorDefTax >= 100) {
+                setStanding(uuid, (int) ((100-plugin.fileManager.collectorDefTax)*100));
+            } else {
+                PreparedStatement pStatement = plugin.database.getConnection().prepareStatement("UPDATE market_standing SET standing=? WHERE uuid=?");
+                pStatement.setInt(1, (getStanding(uuid) + standing));
+                pStatement.setString(2, uuid.toString());
+                pStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

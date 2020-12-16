@@ -44,7 +44,7 @@ public class CollectorCommand extends BaseCommand {
             return;
         }
 
-        if (args.length >= 2 && player.hasPermission("market.command.collector.other")) { // If sender runs /market collector <somePlayer>
+        if (args.length >= 2 && player.hasPermission("market.command.collector.others")) { // If sender runs /market collector <somePlayer>
             Player playerNew = Bukkit.getPlayerExact(args[1]);
             if (playerNew != null && playerNew.isValid()) {
                 playerNew.openInventory(plugin.collectorGUI.GUI(playerNew));

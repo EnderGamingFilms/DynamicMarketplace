@@ -6,7 +6,7 @@
 
     <groupId>me.endergamingfilms</groupId>
     <artifactId>DynamicMarketplace</artifactId>
-    <version>6.3.6</version>
+    <version>6.3.7</version>
     <packaging>jar</packaging>
 
     <name>DynamicMarketplace</name>

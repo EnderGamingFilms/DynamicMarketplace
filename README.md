@@ -6,8 +6,9 @@
 <code>/sell \<item> \<amount> - Sells an item to the market</code><br />
 <code>/sellall \<item> - Sells all of an item in your inventory</code><br />
 <code>/iteminfo \<item> - Get all market info on a specific item</code><br />
+<code>/collector - Open collector for yourself</code><br />
 <code>/worth - Get the sale price of the held item</code><br />
-<code>/sellhand - Sells the item in your hand and that amount</code>
+<code>/sellhand - Sells the item in your hand and that amount</code>/>
 
 ## Permissions
 <code>market.\*</code> - Admin<br />
@@ -18,6 +19,7 @@
 <code>market.command.sellall</code> - Admin<br />
 <code>market.command.sellhand</code> - Admin<br />
 <code>market.command.collector</code> - Admin<br />
+<code>market.command.collector.others</code> - Admin<br />
 <code>market.command.standing</code> - Admin<br />
 <code>market.command.info</code> - Admin<br />
 <code>market.command.worth</code> - Admin<br />
@@ -36,6 +38,8 @@ Make sure **PAPI** is installed! Download and install the latest [PlaceHolderAPI
 > <code>%market_hand% >> returns the sell price of held item</code>
 
 > <code>%market_standing% >> returns current player's standing</code>
+
+> <code>%market_default_standing% >> returns default player standing</code>
 
 ## Requirements
 ### • Vault [\[link\]](https://www.spigotmc.org/resources/vault.34315/)
