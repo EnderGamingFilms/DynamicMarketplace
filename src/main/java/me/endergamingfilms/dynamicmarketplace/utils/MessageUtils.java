@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 public class MessageUtils {
     private final DynamicMarketplace plugin;
+    public final String invalidItemRegex = "[-!$%^&*()+|~=`{}\\[\\]:\";'<>?,.\\/\\\\]";
     public String prefix = "&6[Market] &f";
     public final static String NL = "\n";
     public final static String SPACE = " ";
@@ -41,8 +42,8 @@ public class MessageUtils {
      * @param path String[]
      * @param type BOOLEAN, INT, DOUBLE, STRING[], STRING
      */
-    public List<?> grabConfig(final String path, String[] type) {
-        return plugin.fileManager.getConfig().getList(path);
+    public List<String> grabConfig(final String path, String[] type) {
+        return plugin.fileManager.getConfig().getStringList(path);
     }
 
     /**
@@ -159,10 +160,15 @@ public class MessageUtils {
     }
 
     public int checkAmount(String amount, Player player) {
-        if (amount.matches("[0-9]+")) {
+
+        if (amount.matches("^[0-9]*$")) {
             int number = Integer.parseInt(amount);
             if ( number < 1000 )
                 return  number;
+        } else if (amount.matches("^(\\d*\\.)?\\d+$")) {
+            int dToInt = (int) Double.parseDouble(amount);
+            if (dToInt < 1000)
+                return dToInt;
         }
         send(player, plugin.respond.invalidInput());
         return 1;

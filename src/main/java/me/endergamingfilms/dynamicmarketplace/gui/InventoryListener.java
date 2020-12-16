@@ -2,6 +2,7 @@ package me.endergamingfilms.dynamicmarketplace.gui;
 
 import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Bukkit;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class InventoryListener implements Listener {
     private final DynamicMarketplace instance;
@@ -37,17 +39,15 @@ public class InventoryListener implements Listener {
     @EventHandler
     public void onPlayerClickInventory(InventoryClickEvent event) {
         if (event.getClickedInventory() != null && event.getView().getTitle().equals(CollectorGUI.inventory_name)) { // Check GUI inventory name & if clicked outside
-            if (!slotHashMap.containsKey(event.getSlot())) { // Click area outside allowed space
-                if (event.getCurrentItem() == null) { /*System.out.println("getCurrentItem = null");*/
-                    return;
-                } // If clicked slot is null escape
-                if (event.getClickedInventory().getType() != InventoryType.PLAYER) { // Handlers for GUI inventory clicks
+            if (event.getCurrentItem() == null) {
+                return;
+            } // If clicked slot is null escape
+            if (event.getClickedInventory().getType() != InventoryType.PLAYER && !slotHashMap.containsKey(event.getSlot())) { // Handlers for GUI inventory clicks // Click area outside allowed space
+                event.setCancelled(true);
+                instance.collectorGUI.clicked((Player) event.getWhoClicked(), event.getSlot(), event.getCurrentItem(), event.getInventory());
+            } else { // Handlers for player inventory clicks
+                if (!instance.operations.itemChecks((Player) event.getWhoClicked(), event.getCurrentItem())) { // If item passes all the checks continue
                     event.setCancelled(true);
-                    instance.collectorGUI.clicked((Player) event.getWhoClicked(), event.getSlot(), event.getCurrentItem(), event.getInventory());
-                } else { // Handlers for player inventory clicks
-                    if (!instance.operations.itemChecks((Player) event.getWhoClicked(), event.getCurrentItem())) { // If item passes all the checks continue
-                        event.setCancelled(true);
-                    }
                 }
             }
         }

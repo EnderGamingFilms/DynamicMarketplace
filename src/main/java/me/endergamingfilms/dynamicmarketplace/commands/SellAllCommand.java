@@ -25,7 +25,15 @@ public class SellAllCommand extends BaseCommand {
         }
 
         // Command Actions
-        args = String.join(" ", args).replace("sellall ", "").split(" ");
+        String[] str = args;
+        str = String.join(" ", args).replace("sellall ", "").split(" ");
+
+        // Check if item is blacklisted
+        if (plugin.marketData.checkAgainstBlacklist(str[0])) {
+            plugin.messageUtils.send(player, plugin.respond.buyFailedBlacklist(str[0]));
+            return;
+        }
+
         if (Arrays.toString(args).contains("sellall")) {
             if (plugin.marketData.contains(player.getItemInHand().getType(), !plugin.fileManager.debug)) {
                 itemToSell = player.getItemInHand().getType();

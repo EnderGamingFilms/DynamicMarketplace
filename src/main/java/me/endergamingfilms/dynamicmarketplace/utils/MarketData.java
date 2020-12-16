@@ -1,18 +1,20 @@
 package me.endergamingfilms.dynamicmarketplace.utils;
 
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MarketData {
     private static DynamicMarketplace plugin;
     private Map<Material, MarketItem> marketMap = new HashMap<>();
+    private List<String> blacklist;
 
     public MarketData(@NotNull final DynamicMarketplace instance) {
         plugin = instance;
@@ -54,7 +56,7 @@ public class MarketData {
         }
 
         public double getSellPrice(int purchaseAmount) {
-            return round(purchaseAmount * this.basePrice * 1/getTax(), 2);
+            return round(purchaseAmount * this.basePrice * 1 / getTax(), 2);
         }
 
         public double getSellPrice() {
@@ -141,6 +143,7 @@ public class MarketData {
             return marketMap.get(material);
         return new MarketItem(Material.AIR, "", 0);
     }
+
     // TODO: Clean up all the overloaded getItems and reduce copy/pasted code
     public MarketItem getItem(ItemStack itemStack) {
         return getItem(itemStack.getType(), false);
@@ -324,5 +327,38 @@ public class MarketData {
      */
     public Map<Material, MarketItem> getDataMap() {
         return this.marketMap;
+    }
+
+    /**
+     * Use this to get market item blacklist
+     *
+     * @return List - Will return a list of blacklisted items (can be null)
+     */
+    public List<String> getBlacklist() {
+        return this.blacklist;
+    }
+
+    public void setBlacklist(List<String> newBlacklist) {
+        this.blacklist = newBlacklist;
+    }
+
+    /**
+     * Use this to check item against item blacklist
+     *
+     * @param arg - minecraft item
+     * @return boolean - Will check if the arg is on the blacklist
+     */
+    public boolean checkAgainstBlacklist(String arg) {
+        if (blacklist.contains("craftables")) {
+            if (getItem(arg).hasRecipe()) {
+                return true;
+            }
+        }
+
+        for (String item : blacklist) {
+            if (arg.toLowerCase().contains(item))
+                return true;
+        }
+        return false;
     }
 }

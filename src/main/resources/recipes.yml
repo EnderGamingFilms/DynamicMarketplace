@@ -75,7 +75,46 @@ spruce_slab: spruce_planks 0.5
 spruce_stairs: spruce_planks 1.5
 spruce_trapdoor: spruce_planks 6
 spruce_wood: spruce_log 1.34
+warped_button: warped_planks 1
+warped_door: warped_planks 2
+warped_fence: warped_planks 1.34, stick .67
+warped_fence_gate: warped_planks 0.67, stick 1.34
+warped_planks: warped_stem 0.25
+warped_pressure_plate: warped_planks 2
+warped_sign: warped_planks 2, stick .34
+warped_slab: warped_planks 0.5
+warped_stairs: warped_planks 1.5
+warped_trapdoor: warped_planks 6
+crimson_button: crimson_planks 1
+crimson_door: crimson_planks 2
+crimson_fence: crimson_planks 1.34, stick .67
+crimson_fence_gate: crimson_planks 0.67, stick 1.34
+crimson_planks: crimson_stem 0.25
+crimson_pressure_plate: crimson_planks 2
+crimson_sign: crimson_planks 2, stick .34
+crimson_slab: crimson_planks 0.5
+crimson_stairs: crimson_planks 1.5
+crimson_trapdoor: crimson_planks 6
+blackstone_wall: blackstone 1.5
+blackstone_slab: blackstone 0.5
+blackstone_stairs: blackstone 1.5
+polished_blackstone: blackstone 4
+polished_blackstone_button: polished_blackstone 1
+polished_blackstone_pressure_plate: polished_blackstone 2
+polished_blackstone_slab: polished_blackstone 0.5
+polished_blackstone_stairs: polished_blackstone 1.5
+polished_blackstone_wall: polished_blackstone 1.5
+chiseled_polished_blackstone: polished_blackstone_slab 2
+polished_blackstone_bricks: polished_blackstone 1.34
+cracked_polished_blackstone_bricks: polished_blackstone_bricks 1, coal 1
+polished_blackstone_brick_wall: polished_blackstone_bricks 1.5
+polished_blackstone_brick_stairs: polished_blackstone_bricks 1.5
+polished_blackstone_brick_slab: polished_blackstone_bricks 0.5
 stripped_spruce_wood: spruce_log 1.34
+stripped_crimson_hyphae: crimson_stem 1.34
+stripped_warped_hyphae: warped_stem 1.34
+crimson_hyphae: crimson_stem 1.34
+warped_hyphae: warped_stem 1.34
 wooden_axe: oak_planks 3, stick 2
 wooden_hoe: oak_planks 2, stick 2
 wooden_pickaxe: oak_planks 3, stick 2
@@ -84,6 +123,9 @@ wooden_sword: oak_planks 2, stick 1
 ladder: stick 2.333
 stick: oak_planks 0.5
 torch: coal 0.25, stick 0.25
+soul_torch: soul_sand 0.25, stick 0.25, coal 0.25
+soul_lantern: iron_nugget 8, soul_torch 0.25
+soul_campfire: stick 0.75, soul_sand, oak_log 3
 crafting_table: oak_planks 4
 stone_axe: cobblestone 3, stick 2
 stone_button: stone 1
@@ -111,6 +153,8 @@ compass: iron_ingot 4, redstone 1
 heavy_weighted_pressure_plate: iron_ingot 2
 shears: iron_ingot 2
 lantern: iron_nugget 8, torch 1
+nether_gold_ore: gold_nugget 6
+gilded_blackstone: blackstone 1, gold_nugget 5
 lava_bucket: bucket 1, obsidian 1
 water_bucket: bucket 1, ice 1
 cod_bucket: bucket 1, cod 1
@@ -146,6 +190,18 @@ diamond_leggings: diamond 6
 diamond_pickaxe: diamond 3, stick 2
 diamond_shovel: diamond 1, stick 2
 diamond_sword: diamond 2, stick 1
+netherite_scrap: ancient_debris 1, smelting 1
+netherite_ingot: netherite_scrap 4, gold_ingot 4
+netherite_axe: netherite_ingot 1, diamond_axe 1
+netherite_block: netherite_ingot 9
+netherite_boots: netherite_ingot 1, diamond_boots 1
+netherite_chestplate: netherite_ingot 1, diamond_chestplate 1
+netherite_helmet: netherite_ingot 1, diamond_helmet 1
+netherite_hoe: netherite_ingot 1, diamond_hoe 1
+netherite_leggings: netherite_ingot 1, diamond_leggings 1
+netherite_pickaxe: netherite_ingot 1, diamond_pickaxe 1
+netherite_shovel: netherite_ingot 1, diamond_shovel 1
+netherite_sword: netherite_ingot 1, diamond_sword 1
 redstone_block: redstone 9
 redstone_lamp: redstone 4, glowstone_dust 1
 redstone_torch: redstone 1, stick 1
@@ -172,6 +228,7 @@ chest_minecart: chest 1, minecart 1
 piston: iron_ingot 1, redstone 1, cobblestone 4, oak_planks 3
 sticky_piston: piston 1, slime_ball 1
 tnt: gunpowder 5, sand 4
+respawn_anchor: crying_obsidian 6, glowstone 3
 emerald_block: emerald 9
 coal_block: coal 9
 lapis_block: lapis_lazuli 8
@@ -200,6 +257,9 @@ granite_wall: granite 1
 polished_granite: granite 1
 polished_granite_slab: granite 0.5
 polished_granite_stairs: granite 1
+polished_basalt: basalt 3
+chain: iron_ingot 1, iron_nugget 1
+magma_block: magma_cream 0.50
 cobblestone_slab: cobblestone 0.5
 cobblestone_stairs: cobblestone 1
 cobblestone_wall: cobblestone 1
@@ -252,6 +312,7 @@ stone_brick_stairs: stone_bricks 1
 stone_brick_wall: stone_bricks 1
 stone_slab: stone 0.5
 stone_stairs: stone 1
+chiseled_stone_bricks: stone_brick_slab 2
 mossy_cobblestone: vine 1, cobblestone 1
 mossy_cobblestone_slab: mossy_cobblestone 0.5
 mossy_cobblestone_stairs: mossy_cobblestone 1
@@ -299,6 +360,8 @@ smithing_table: iron_ingot 2, oak_planks 4
 smoker: oak_log 4, furnace 1
 stonecutter: stone 3, iron_ingot 1
 loom: string 2, oak_planks 2
+lodestone: chiseled_stone_bricks 8, netherite_ingot 1
+target: hay_block 1, redstone 4
 barrel: oak_planks 6, oak_slab 2
 furnace: cobblestone 8
 chest: oak_planks 8
@@ -333,6 +396,7 @@ sugar: sugar_cane 1
 bowl: oak_planks 0.75
 beetroot_soup: beetroot 6, bowl 1
 rabbit_stew: rabbit 1, bowl 1, carrot 1, baked_potato 1, brown_mushroom 1
+mushroom_stew: bowl 1, red_mushroom 1, brown_mushroom 1
 cake: sugar 2, egg 1, wheat 3, growing 1
 beehive: oak_planks 6, honeycomb 3
 carrot_on_a_stick: fishing_rod, carrot
@@ -343,7 +407,7 @@ jack_o_lantern: pumpkin 1, torch 1
 pumpkin_seeds: pumpkin 0.25
 pumpkin_pie:  pumpkin 1, sugar 1, egg 1
 melon: melon_slice 9
-wheat: wheat_seeds 0.5, growing 1
+wheat: wheat_seeds 1.8, growing 1
 bread: wheat 3
 melon_seeds: melon_slice 1
 cooked_beef: beef 1, coal 0.125, smelting 1

@@ -1,5 +1,8 @@
 package me.endergamingfilms.dynamicmarketplace.gui;
 
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.apache.commons.lang.ArrayUtils;
@@ -17,11 +20,13 @@ public class CollectorGUI {
     private final DynamicMarketplace instance;
     public static final int fillThese[] = {0,1,2,3,4,5,6,7,8,9,15,17,18,24,25,26,27,33,35,36,37,38,39,40,41,42,43,44,45};
     public static final String borderItem = " ", cancelItem = ChatColor.RED + "Cancel", sellItem = ChatColor.GREEN + "Sell These Items";
+    public final NamespacedKey key;
     public static Inventory inv;
     public static String inventory_name;
     public static int rows = 9 * 5;
 
     public CollectorGUI(@NotNull final DynamicMarketplace instance) {
+        this.key = new NamespacedKey(instance, "collector");
         this.instance = instance;
         initialize();
     }
@@ -35,10 +40,26 @@ public class CollectorGUI {
     public Inventory GUI (Player player) {
         Inventory toReturn = Bukkit.createInventory(null, rows, inventory_name);
 
-        placeItem(inv, 16, createItem(Material.RED_STAINED_GLASS_PANE, 1, cancelItem));
-        placeItem(inv, 34, createItem(Material.GREEN_STAINED_GLASS_PANE, 1, sellItem));
+        ItemStack cItem = createItem(Material.RED_STAINED_GLASS_PANE, 1, cancelItem);
+        ItemStack sItem = createItem(Material.GREEN_STAINED_GLASS_PANE, 1, sellItem);
+        ItemStack bItem = createItem(Material.GRAY_STAINED_GLASS_PANE, 1, borderItem);
 
-        setFill(createItem(Material.GRAY_STAINED_GLASS_PANE, 1, borderItem));
+        ItemMeta cItemMeta = cItem.getItemMeta();
+        ItemMeta sItemMeta = sItem.getItemMeta();
+        ItemMeta bItemMeta = bItem.getItemMeta();
+
+        Objects.requireNonNull(cItemMeta).getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
+        Objects.requireNonNull(sItemMeta).getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
+        Objects.requireNonNull(bItemMeta).getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
+
+        cItem.setItemMeta(cItemMeta);
+        sItem.setItemMeta(sItemMeta);
+        bItem.setItemMeta(bItemMeta);
+
+        placeItem(inv, 16, cItem);
+        placeItem(inv, 34, sItem);
+
+        setFill(bItem);
 
         toReturn.setContents((inv.getContents()));
         return toReturn;
@@ -117,7 +138,19 @@ public class CollectorGUI {
     // Final check
     public boolean illegalItemFound(Inventory inv) {
         for (ItemStack item : inv.getContents()) {
-            if (item == null) continue;
+            if (item == null) {
+//                System.out.println("--> Item==Null");
+                continue;
+            }
+
+            if (item.hasItemMeta()) {
+                if (Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer().has(this.key, PersistentDataType.INTEGER)) {
+                    continue;
+                }
+            }
+
+//            System.out.println("illegalItemFound() | item: " + item.getType());
+//            System.out.println("illegalItemFound() | itemChecks()? " + instance.operations.itemChecks(item));
 
             if (!instance.operations.itemChecks(item)) return true;
         }
@@ -140,10 +173,8 @@ public class CollectorGUI {
 
                 InventoryListener.realClose = true;
 
-
                 // Check if the player put anything in the CollectorGUI
                 for (int s : InventoryListener.Allowed) { if (inv.getItem(s) != null) { empty = false; break; } }
-
                 // Check if the user has placed anything that shouldn't be there in the gui
                 if (illegalItemFound(player.getOpenInventory().getTopInventory())) {
                     InventoryListener.realClose = false;

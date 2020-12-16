@@ -1,8 +1,10 @@
 package me.endergamingfilms.dynamicmarketplace.utils;
 
 
+import com.sun.org.apache.xml.internal.security.algorithms.Algorithm;
 import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Material;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,11 +34,13 @@ public class FileManager {
     public double multiplierCraft;
     public double multiplierSmelt;
     public double multiplierGrow;
+    public boolean mySQLEnabled;
     public boolean collectorIsEnabled;
     public double collectorDefTax;
     public boolean collectorHasStanding;
-    public String[] blacklist;
     public boolean debug;
+    public String algorithm;
+    public double easyAdjustment;
     //------------------------------------------
 
     /**
@@ -48,7 +52,6 @@ public class FileManager {
     private File messageFile;
     public File materialsFile;
     private File recipesFile;
-    private File listFile;
     //------------------------------------------
 
     public void setup() {
@@ -62,7 +65,7 @@ public class FileManager {
         readMaterialData();
         readRecipeData();
         // Generate pricing
-        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial().getKey().getKey()));
+        calcItemData();
     }
 
     /**
@@ -101,13 +104,16 @@ public class FileManager {
     public void reloadSettings() {
         this.scalar = plugin.messageUtils.grabConfig("QuantityScalar", INT);
         this.tax = plugin.messageUtils.grabConfig("Tax", DOUBLE);
+        this.algorithm = plugin.messageUtils.grabConfig("Algorithm", STRING);
+        this.easyAdjustment = plugin.messageUtils.grabConfig("EasyAdjustment", DOUBLE);
         this.multiplierCraft = plugin.messageUtils.grabConfig("Multipliers.Growing", DOUBLE);
         this.multiplierGrow = plugin.messageUtils.grabConfig("Multipliers.Smelting", DOUBLE);
         this.multiplierSmelt = plugin.messageUtils.grabConfig("Multipliers.Crafting", DOUBLE);
+        this.mySQLEnabled = plugin.messageUtils.grabConfig("MySQL.Enabled", BOOLEAN);
         this.collectorIsEnabled = plugin.messageUtils.grabConfig("TheCollector.Enabled", BOOLEAN);
         this.collectorDefTax = plugin.messageUtils.grabConfig("TheCollector.Tax", DOUBLE);
         this.collectorHasStanding = plugin.messageUtils.grabConfig("TheCollector.Standing.Enabled", BOOLEAN);
-        this.blacklist = plugin.messageUtils.grabConfig("Purchase-Blacklist", LIST).toArray(new String[0]);
+        plugin.marketData.setBlacklist(plugin.messageUtils.grabConfig("Item-Blacklist", LIST));
         this.debug = plugin.messageUtils.grabConfig("Debug", BOOLEAN);
     }
     //------------------------------------------
@@ -181,7 +187,7 @@ public class FileManager {
             // Go thought the file grabbing line by line
             while ((line = br.readLine()) != null) {
                 String[] item = line.split("(: )");
-                plugin.marketData.putItem(item[0], Double.parseDouble(item[1]));
+                plugin.marketData.putItem(item[0], MarketData.round(Double.parseDouble(item[1]) * this.easyAdjustment, 2));
             }
             br.close();
         } catch (IOException e) {
@@ -223,7 +229,7 @@ public class FileManager {
     }
 
     public boolean outputMissingMats() {
-        listFile = new File(plugin.getDataFolder(), "unresolved.yml");
+        File listFile = new File(plugin.getDataFolder(), "unresolved.yml");
         try {
             listFile.createNewFile();
             plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eUnresolved.yml has been successfully created");
@@ -305,7 +311,12 @@ public class FileManager {
     }
 
     public void calcItemData() {
-        plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial().getKey().getKey()));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                plugin.marketData.getDataMap().forEach((k, v) -> plugin.calculations.calcPrice(v.getMaterial().getKey().getKey()));
+            }
+        }.runTaskAsynchronously(plugin);
     }
 
 //    public void reloadAllContainingItem(Material material) {

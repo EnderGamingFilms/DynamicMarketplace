@@ -29,6 +29,12 @@ public class SellCommand extends BaseCommand {
         String[] str = args;
         str = String.join(" ", str).replace("sell ", "").split(" ");
 
+        // Check if item is blacklisted
+        if (plugin.marketData.checkAgainstBlacklist(str[0])) {
+            plugin.messageUtils.send(player, plugin.respond.buyFailedBlacklist(str[0]));
+            return;
+        }
+
         // Command actions
         if (plugin.marketData.contains(str[0], !plugin.fileManager.debug)) {
             int amount = (str.length == 1) ? 1 : plugin.messageUtils.checkAmount(str[1], player);

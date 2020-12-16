@@ -73,7 +73,7 @@ public class Responses {
             message.addExtra(plugin.messageUtils.colorize("&f*This is a crafted item." + MessageUtils.NL));
         } else {
             message.addExtra(plugin.messageUtils.colorize("&fQuantity: &b~" +
-                    plugin.marketData.getItem(item).getAmount()) + MessageUtils.NL);
+                    (int) plugin.marketData.getItem(item).getAmount()) + MessageUtils.NL);
         }
         message.addExtra(plugin.messageUtils.colorize("&fBuy  : &a" +
                 plugin.economy.format(plugin.marketData.getItem(item).getBuyPrice(1)) + "&f each, &a" +
@@ -99,6 +99,10 @@ public class Responses {
 
     public String buyFailedSpace(String item, final int amount) {
         return plugin.messageUtils.getFormattedMessage("buy.fail-space", item, amount);
+    }
+
+    public String buyFailedBlacklist(String item) {
+        return plugin.messageUtils.getFormattedMessage("buy.fail-blacklist", plugin.messageUtils.capitalize(item), 0);
     }
 
     public String buySuccess(String item, final int amount, final String sale) {

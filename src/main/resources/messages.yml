@@ -16,12 +16,13 @@ buy:
   fail-cost: "&eYou could not afford the purchase, &6cost: %cost%&e, your &6balance: %balance%"
   fail-amount: "&eYou cannot purchase &b%amount% %item%&e, there are not that many left in the shop."
   fail-space: "&eCould not purchase &b%amount% %item%(s)&e because your inventory space is limited!"
+  fail-blacklist: "&eYou cannot buy/sell this item because it's blacklisted! &7(&b%item%&7)"
 sell:
   success: "&aYou have sold &b%amount% %item%(s)&a for &b%cost%"
   fail-amount: "&eYou didn't have that many &b%item%(s)&e, so &b%amount%&e were sold instead."
 collector:
   name: "&7&lThe Collector&r "
-  success: "%collector_name%&ehas finished selling your item(s)!"
+  success: "Your items have been sold (hover for info)!"
   failed: "&eYour transaction has been cancelled."
   profit: "&aYou received %tax%% of the profits."
   total: "&6Total Worth: %profit%"

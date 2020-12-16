@@ -2,14 +2,16 @@ package me.endergamingfilms.dynamicmarketplace.commands;
 
 import me.endergamingfilms.dynamicmarketplace.DynamicMarketplace;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class CollectorCommand {
+public class CollectorCommand extends BaseCommand {
     private final DynamicMarketplace plugin;
 
-    public CollectorCommand(@NotNull final DynamicMarketplace instance) {
+    public CollectorCommand(String command, @NotNull final DynamicMarketplace instance) {
+        super(command);
         this.plugin = instance;
     }
 
@@ -42,7 +44,7 @@ public class CollectorCommand {
             return;
         }
 
-        if (args.length >= 2) { // If sender runs /market collector <somePlayer>
+        if (args.length >= 2 && player.hasPermission("market.command.collector.other")) { // If sender runs /market collector <somePlayer>
             Player playerNew = Bukkit.getPlayerExact(args[1]);
             if (playerNew != null && playerNew.isValid()) {
                 playerNew.openInventory(plugin.collectorGUI.GUI(playerNew));
@@ -52,5 +54,22 @@ public class CollectorCommand {
         } else { // If sender runs /market collector
             player.openInventory(plugin.collectorGUI.GUI(player));
         }
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            plugin.messageUtils.send(sender, plugin.respond.nonPlayer());
+            return false;
+        }
+
+        if (!sender.hasPermission("market.command.collector")) {
+            plugin.messageUtils.send(sender, plugin.respond.noPerms());
+            return false;
+        }
+
+        runFromPlayer((Player) sender, args);
+
+        return true;
     }
 }

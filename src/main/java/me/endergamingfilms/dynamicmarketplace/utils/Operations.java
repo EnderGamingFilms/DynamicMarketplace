@@ -25,7 +25,11 @@ public class Operations {
         MarketData.MarketItem marketItem = plugin.marketData.getItem(item, !plugin.fileManager.debug);
         int purchased = 0;
         double balance = plugin.economy.getBalance(player);
-
+        // Check if item is blacklisted
+        if (plugin.marketData.getBlacklist().contains(item)) {
+            plugin.messageUtils.send(player, plugin.respond.buyFailedBlacklist(item));
+            return false;
+        }
         // Check if player has enough money to make this purchase
         if (balance < marketItem.getBuyPrice(amount)) {
             // The player has insufficient funds
@@ -45,13 +49,10 @@ public class Operations {
                 } else { // If inventory is not full
                     // set size to the purchase amount or to the max item stackSize
                     int size = Math.min(amount, itemStack.getType().getMaxStackSize());
-
                     itemStack.setAmount(size);
-
                     // Update tacking values
                     amount -= size;
                     purchased += size;
-
                     // Add items to inventory
                     player.getInventory().addItem(itemStack);
                 }
@@ -93,6 +94,9 @@ public class Operations {
                 }
             }
         }
+        // If no item by that type can be sold
+        if (found == 0)
+             return false;
         // Calculate price
         double price = marketItem.getSellPrice(Math.min(found, amount));
         // Update player economy balance
@@ -205,6 +209,36 @@ public class Operations {
         }
     }
 
+    public String generatePrice(Player player, Inventory inventory) {
+        List<ItemStack> itemStackList = new ArrayList<>();
+        double totalPrice = 0.0;
+        int found = 0;
+        for (ItemStack stack : player.getOpenInventory().getTopInventory().getContents()) {
+            if (stack == null) continue;
+
+            if (itemChecks(stack)) {
+                totalPrice += plugin.marketData.getItem(stack.getType(), !plugin.fileManager.debug).getSellPrice(stack.getAmount());
+                // Track Items Being Found
+                found += 1;
+                itemStackList.add(stack);
+            }
+        }
+        if (plugin.fileManager.debug) { // Debug for selling items in custom GUI (collector)
+            System.out.println("Items Found: " + found);
+            System.out.println("Total Price: " + getFormatPrice(totalPrice));
+            System.out.println("Price Generated For Items: " + Arrays.toString(itemStackList.toArray()));
+        }
+        return getFormatPrice(totalPrice);
+//            plugin.fileManager.calcItemData();
+//            // Profits calculations
+//            double profits;
+//            if (plugin.fileManager.collectorHasStanding) { // Check if "The Collector" standing system is enabled
+//                profits = (plugin.standing.getStanding(player.getUniqueId()) / 100.0) + plugin.fileManager.collectorDefTax;
+//            } else {
+//                profits = plugin.fileManager.collectorDefTax;
+//            }
+    }
+
     private void updateFromRecipe(String recipe, int purchaseAmount, boolean selling) {
         String returned = parseRecipe(recipe);
         if (!returned.equals("air")) {
@@ -284,7 +318,11 @@ public class Operations {
         else if (!plugin.marketData.contains(item.getType(), !plugin.fileManager.debug)) {
             return false;
         }
-        // If all checks were passed successfully - Case 6
+        // Check if the item is blacklisted - Case 6
+        else if (plugin.marketData.checkAgainstBlacklist(item.getType().name().toLowerCase())) {
+            return false;
+        }
+        // If all checks were passed successfully - Case 7
         else return true;
     }
 
@@ -314,7 +352,12 @@ public class Operations {
             plugin.messageUtils.send(player, plugin.respond.itemInvalid(plugin.messageUtils.capitalize(item.getType().getKey().getKey())));
             return false;
         }
-        // If all checks were passed successfully - Case 6
+        // Check if the item is blacklisted - Case 6
+        else if (plugin.marketData.checkAgainstBlacklist(item.getType().name().toLowerCase())) {
+            plugin.messageUtils.send(player, plugin.respond.buyFailedBlacklist(item.getType().name()));
+            return false;
+        }
+        // If all checks were passed successfully - Case 7
         else return true;
     }
 

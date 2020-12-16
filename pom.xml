@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.endergamingfilms.dynamicmarketplace</groupId>
+    <groupId>me.endergamingfilms</groupId>
     <artifactId>DynamicMarketplace</artifactId>
-    <version>6.1.2</version>
+    <version>6.3.6</version>
     <packaging>jar</packaging>
 
-    <name>Dynamic Marketplace</name>
+    <name>DynamicMarketplace</name>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>1.8.3</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -73,6 +73,11 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-shade</artifactId>
+            <version>1.2.7.RELEASE</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>

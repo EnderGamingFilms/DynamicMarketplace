@@ -17,9 +17,9 @@ public class StandingCommand {
     }
 
     public void runFromConsole(CommandSender sender, String[] args) { // When the command is run from console
-        // Check if Standing is enabled
-        if (!plugin.fileManager.collectorHasStanding) {
-            plugin.messageUtils.send(sender, plugin.messageUtils.format("&cPlease enable standing in config.yml to use this command."));
+        // Check if Standing and MySQL is enabled
+        if (!plugin.fileManager.collectorHasStanding && !plugin.fileManager.mySQLEnabled) {
+            plugin.messageUtils.send(sender, plugin.messageUtils.format("&cPlease enable standing and MySQL in config.yml to use this command."));
             return;
         }
 

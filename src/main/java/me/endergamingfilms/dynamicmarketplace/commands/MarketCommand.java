@@ -8,10 +8,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class MarketCommand extends BaseCommand {
     private final DynamicMarketplace plugin;
@@ -138,22 +138,26 @@ public class MarketCommand extends BaseCommand {
 
         // Return all sub-commands
         if (args.length == 1) {
-            System.out.println("--->args: " + args[0]);
-            return plugin.cmdManager.subCommandList;
+            return plugin.cmdManager.subCommandList.stream()
+                    .map(String::toLowerCase)
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .collect(Collectors.toList());
         }
         // Handle level 1 sub-commands
         if (args.length == 2) {
             if (args[0].equals("standing")) {
-                return Arrays.asList("add","remove","set");
+                List<String> standingSubList = Arrays.asList("add","remove","set","get");
+                return standingSubList.stream()
+                        .map(String::toLowerCase)
+                        .filter(s -> s.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
             } else if (args[0].equalsIgnoreCase("collector")) {
                 // Generate Online Player List
                 List<String> playerList = new ArrayList<>();
                 for (Player player :  Bukkit.getOnlinePlayers()) {
                     if (player == null) continue;
-                    playerList.add(player.getDisplayName());
+                    playerList.add(player.getName());
                 }
-//                playerList.add("Mojo_JOJO");
-//                playerList.add("Jeffafa");
                 return playerList;
             }
         }
@@ -164,7 +168,7 @@ public class MarketCommand extends BaseCommand {
                 List<String> playerList = new ArrayList<>();
                 for (Player player :  Bukkit.getOnlinePlayers()) {
                     if (player == null) continue;
-                    playerList.add(player.getDisplayName());
+                    playerList.add(player.getName());
                 }
                 return playerList;
             }

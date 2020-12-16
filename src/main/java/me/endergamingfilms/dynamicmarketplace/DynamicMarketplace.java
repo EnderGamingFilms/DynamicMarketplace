@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.sql.SQLException;
 
@@ -31,6 +32,7 @@ public final class DynamicMarketplace extends JavaPlugin implements Listener {
     public final SQLGetter standing = new SQLGetter(this);
     //    public final GuiManager guiManager = new GuiManager(this);
     public final CollectorGUI collectorGUI = new CollectorGUI(this);
+    private BukkitTask sqlTimeOutPrevention;
     public Economy economy;
 
     @Override
@@ -73,6 +75,11 @@ public final class DynamicMarketplace extends JavaPlugin implements Listener {
         HandlerList.unregisterAll((Plugin) this);
         fileManager.saveMaterialData();
         database.disconnect();
+        try {
+            this.sqlTimeOutPrevention.cancel();
+        } catch (NullPointerException ignored) {
+        }
+
         super.onDisable();
     }
 
@@ -92,7 +99,12 @@ public final class DynamicMarketplace extends JavaPlugin implements Listener {
 
             if (database.isConnected()) {
                 messageUtils.log(MessageUtils.LogLevel.INFO, "&aDatabase successfully connected.");
-                standing.createTable();
+                this.sqlTimeOutPrevention = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
+                    @Override
+                    public void run() {
+                        standing.createTable();
+                    }
+                }, 5 * 20L, (60 * 5) * 20L);
                 // Register Listeners in Main Class (PlayerJoinEvent)
                 this.getServer().getPluginManager().registerEvents(this, this);
             }
@@ -115,7 +127,24 @@ public final class DynamicMarketplace extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        standing.createPlayer(player);
+        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                Player player = event.getPlayer();
+//                try {
+//                    if (fileManager.debug) {
+//                        messageUtils.log(MessageUtils.LogLevel.INFO, "onJoin() | Database.isConnected()? " + database.isConnected());
+//                        messageUtils.log(MessageUtils.LogLevel.INFO, "onJoin() | Database.isClosed()? " + database.getConnection().isClosed());
+//                    }
+//                    if (!database.isConnected() || database.getConnection().isClosed()) {
+//                        database.connect();
+//                    }
+//                } catch (SQLException | ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+                if (!standing.playerExists(player.getUniqueId()))
+                    standing.createPlayer(player);
+            }
+        });
     }
 }
